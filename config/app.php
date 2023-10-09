@@ -58,7 +58,8 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
-
+    'deploy_date' => env('DEPLOY_DATE'),
+    'deploy_year' => env('DEPLOY_YEAR',2023),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

@@ -17,6 +17,11 @@ return new class extends Migration
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time')->nullable();
+            $table->float('sanction_amount')->default(0);
+            $table->float('total_entries')->default(0);
+            $table->float('total_funds')->default(0);
+            $table->float('total_loans')->default(0);
+            $table->float('total_amount')->default(0);
             $table->string('agenda'); // ordre du jour
             $table->unsignedBigInteger('coordinator');
             $table->unsignedBigInteger('user_id');

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('town');
             $table->string('logo')->nullable();
             $table->string('description')->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
             $table->dateTime('deleted_at')->nullable();
         });

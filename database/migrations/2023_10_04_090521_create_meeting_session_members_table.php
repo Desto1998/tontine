@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('meeting_session_members', function (Blueprint $table) {
             $table->id();
             $table->float('amount');
+            $table->string('present');
+            $table->boolean('took')->default(false);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('session_id');

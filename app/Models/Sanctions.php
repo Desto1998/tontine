@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Sanctions extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'association_id',
+        'user_id',
+    ];
 }
