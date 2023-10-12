@@ -190,4 +190,42 @@ class AssociationController extends Controller
         }
         return false;
     }
+
+    /**
+     * Return user list view
+     * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+     */
+    public function editForm(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        return view('association.association-list');
+    }
+
+    public function updateMy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['string','min:5','max:255'],
+            'phone' => ['required', 'string', 'min:9','max:14'],
+            'email' => ['required', 'email'],
+            'country' => ['required'],
+            'town' => ['required'],
+            'description' => ['required'],
+            'fist_name' => ['required'],
+            'last_name' => ['required','string', 'min:5','max:255'],
+            'id' => ['required','int','exists:associations'],
+        ]);
+
+        if ($validator->fails())
+        {
+            return response()->json(['error'=>$validator->errors()]);
+        }
+        $save = $this->associationService->update($request->all()['id'],$request->all());
+        $id = $request->all()['id'];
+        $this->logService->save("Modification", 'Association', "Modification des informations l'association ID: $id le" . now()." Donne: ", $request->all()['id']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Modifié avec succès.',
+            'data' => $save,
+        ]);
+    }
 }

@@ -13,7 +13,7 @@ class MeetingSessionMember extends Model
         'amount',
         'deleted_by',
         'user_id',
-        'session_id',
+        'session_contribution_id',
         'session_member_id',
         'meeting_id',
         'present',

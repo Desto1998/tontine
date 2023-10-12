@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('took')->default(false);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('session_id');
+            $table->unsignedBigInteger('session_contribution_id');
             $table->unsignedBigInteger('session_member_id');
             $table->unsignedBigInteger('meeting_id');
             $table->timestamps();
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreign('deleted_by')->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->foreign('session_id')->references('id')->on('sessions')
+            $table->foreign('session_contribution_id')->references('id')->on('session_contributions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('meeting_id')->references('id')->on('meetings')

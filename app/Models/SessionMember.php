@@ -18,6 +18,8 @@ class SessionMember extends Model
         'user_id',
         'session_id',
         'member_id',
+        'taken_date',
+        'taken_amount',
     ];
 
     /**

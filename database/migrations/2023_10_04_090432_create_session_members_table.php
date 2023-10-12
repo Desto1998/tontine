@@ -16,6 +16,8 @@ return new class extends Migration
             $table->float('amount');
             $table->integer('take_order')->default(0);
             $table->boolean('taken')->default(false);
+            $table->date('taken_date')->nullable();
+            $table->float('taken_amount')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('session_id');

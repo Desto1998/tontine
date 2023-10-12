@@ -60,8 +60,8 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => ['string','min:5','max:255'],
-            'last_name' => ['string','min:5','max:255'],
+            'first_name' => ['required','string','min:5','max:255'],
+            'last_name' => ['required','string','min:5','max:255'],
             'phone' => ['required', 'string', 'min:9','max:14'],
             'address' => ['required', 'email'],
             'city' => ['required'],
@@ -135,8 +135,8 @@ class MemberController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => ['string','min:5','max:255'],
-            'last_name' => ['string','min:5','max:255'],
+            'first_name' => ['required','string','min:5','max:255'],
+            'last_name' => ['required','string','min:5','max:255'],
             'phone' => ['required', 'string', 'min:9','max:14'],
             'address' => ['required', 'email'],
             'city' => ['required'],
@@ -152,14 +152,13 @@ class MemberController extends Controller
         $data = array();
         $data['first_name'] = $request->input('fist_name');
         $data['last_name'] = $request->input('last_name');
-        $data['password'] = Hash::make($request->input('password'));
         $data['phone'] = $request->input('phone');
         $data['email'] = $request->input('email');
         $data['city'] = $request->input('town');
         $data['address'] = $request->input('address');
         $data['has_fund'] = $request->input('has_fund');
         $data['fund_amount'] = $request->input('fund_amount');
-        $save = $this->associationService->update($request->all()['id'],$data);
+        $save = $this->memberService->update($request->all()['id'],$data);
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Member', "Modification des informations du membre ID: $id le" . now()." Donne: ", $request->all()['id']);
 

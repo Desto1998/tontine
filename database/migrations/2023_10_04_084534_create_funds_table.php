@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('association_id');
             $table->unsignedBigInteger('meeting_id')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('deleted_by')->nullable();
@@ -24,6 +25,10 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('member_id')->references('id')->on('members')
+                ->onUpdate('cascade')
+                ->onDelete('cascade')
+            ;
+            $table->foreign('association_id')->references('id')->on('associations')
                 ->onUpdate('cascade')
                 ->onDelete('cascade')
             ;

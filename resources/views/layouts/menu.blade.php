@@ -8,7 +8,7 @@
 </li>
 <li class="nav-header">COTISATION ET CAISSE</li>
 <li class="nav-item">
-    <a href="{{ route('admin.associations.index') }}" class="nav-link">
+    <a href="{{ route('meeting.index') }}" class="nav-link">
         <i class="nav-icon fa fa-store"></i>
         <p>
             Séances
@@ -17,19 +17,19 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="{{ route('meeting.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Gestions des Séances</p>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="{{ route('meeting.create') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Ajouter une Séance</p>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="{{ route('loan.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Gestion des prèts</p>
             </a>
@@ -60,7 +60,7 @@
     </ul>
 </li>
 <li class="nav-item">
-    <a href="{{ route('admin.associations.index') }}" class="nav-link">
+    <a href="{{ route('contribution.index') }}" class="nav-link">
         <i class="nav-icon fa fa-handshake"></i>
         <p>
             Cotisations
@@ -69,13 +69,13 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ route('admin.associations.index') }}" class="nav-link">
+            <a href="{{ route('contribution.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Cotisations</p>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="{{ route('sanction.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Sansions</p>
             </a>
@@ -83,7 +83,7 @@
     </ul>
 </li>
 <li class="nav-item">
-    <a href="{{ route('admin.associations.index') }}" class="nav-link">
+    <a href="" class="nav-link">
         <i class="nav-icon fa fa-dollar-sign"></i>
         <p>
             Caisses
@@ -92,13 +92,13 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="{{ route('fund.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Fonds</p>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Caisse</p>
             </a>
@@ -113,7 +113,7 @@
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route('admin.associations.index') }}" class="nav-link">
+    <a href="{{ route('association.detail') }}" class="nav-link">
         <i class="nav-icon fas fa-house-user"></i>
         <p>Mon association</p>
     </a>

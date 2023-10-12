@@ -17,6 +17,7 @@ class Fund extends Model
         'user_id',
         'meeting_id',
         'deleted_by',
+        'association_id',
     ];
 
     /**
