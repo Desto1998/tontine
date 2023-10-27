@@ -58,7 +58,7 @@ class ContributionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['string','min:5','max:255'],
-            'description' => ['string','max:255'],
+            'description' => ['string'],
             'type' => ['string', 'min:5','max:50'],
 
         ]);
@@ -67,8 +67,13 @@ class ContributionController extends Controller
         {
             return response()->json(['error'=>$validator->errors()]);
         }
-
-        $member = $this->contributionService->store($request->all());
+        $data = array();
+        $data['name'] = $request->input('name');
+        $data['description'] = $request->input('description');
+        $data['type'] = $request->input('type');
+        $data['association_id'] = \Auth::user()->association_id;
+        $data['user_id'] = \Auth::id();
+        $member = $this->contributionService->store($data);
         if ($member) {
             $this->logService->save("Enregistrement", 'Contribution', "Enregistrement d'une cotisation ID: $member->id le" . now()." Donne: $member", $member->id);
         }
@@ -90,7 +95,8 @@ class ContributionController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Contribution::where('contributions.deleted_by', null)
+            $data = Contribution::where('contributions.association_id',\Auth::user()->association_id)
+                ->where('contributions.deleted_by', null)
                 ->join('users','contributions.user_id','users.id')
 //                ->orderBy('contributions.id', 'desc')
                 ->select('contributions.*', 'users.first_name as user');
@@ -124,7 +130,7 @@ class ContributionController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['string','min:5','max:255'],
             'description' => ['string','max:255'],
-            'type' => ['required', 'string', 'min:9','max:14'],
+            'type' => ['required', 'string', 'min:5','max:50'],
             'id' => ['required', 'integer', 'exists:contributions'],
 
         ]);
@@ -134,7 +140,11 @@ class ContributionController extends Controller
             return response()->json(['error'=>$validator->errors()]);
         }
 
-        $save = $this->contributionService->update($request->all()['id'],$request->all());
+        $data = array();
+        $data['name'] = $request->input('name');
+        $data['description'] = $request->input('description');
+        $data['type'] = $request->input('type');
+        $save = $this->contributionService->update($request->all()['id'],$data);
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Contribution', "Modification des informations de la cotisation ID: $id le" . now()." Donne: ", $request->all()['id']);
 

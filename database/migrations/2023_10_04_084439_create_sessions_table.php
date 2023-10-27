@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             $table->boolean('status')->default(true);
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('contribution_id');
+//            $table->unsignedBigInteger('contribution_id');
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->foreign('deleted_by')->references('id')->on('users')
                 ->onUpdate('cascade')
@@ -29,9 +29,9 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->foreign('contribution_id')->references('id')->on('contributions')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+//            $table->foreign('contribution_id')->references('id')->on('contributions')
+//                ->onUpdate('cascade')
+//                ->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -57,7 +57,7 @@
                             <th>Pays</th>
                             <th>Ville</th>
                             <th>Adresse</th>
-                            <th>Action</th>
+                            <th data-priority="2">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -101,29 +101,32 @@
                         <div class="row">
                             <div class="form-group col-md-6 mb-3">
                                 <label for="country">Pays<span class="text-danger">*</span></label>
-                                <input type="text" name="country" id="country" class="form-control" required autocomplete="country">
+                                <input type="text" name="country" id="country" class="form-control" required
+                                       autocomplete="country">
                                 <div id="country-error" class="text-danger error-display" role="alert"></div>
                             </div>
                             <div class="form-group col-md-6 mb-3">
                                 <label for="town">Ville<span class="text-danger">*</span></label>
-                                <input type="text" name="town" id="town" class="form-control" required autocomplete="town">
+                                <input type="text" name="town" id="town" class="form-control" required
+                                       autocomplete="town">
                                 <div id="town-error" class="text-danger error-display" role="alert"></div>
                             </div>
                         </div>
 
 
                         <div class="row">
-                            <div class="form-group col-md-6 mb-3"><div class="form-group col-md-6 mb-3">
-                                    <label for="first_name">Nom d'un membre<span class="text-danger">*</span></label>
-                                    <input type="text" name="first_name" id="first_name" class="form-control" required autocomplete="first_name">
-                                    <div id="first_name-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="first_name">Nom d'un membre<span class="text-danger">*</span></label>
+                                <input type="text" name="first_name" id="first_name" class="form-control" required
+                                       autocomplete="first_name">
+                                <div id="first_name-error" class="text-danger error-display" role="alert"></div>
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
                                 <label for="last_name">Prenom du membre<span class="text-danger">*</span></label>
-                                <input type="text" name="last_name" id="last_name" class="form-control" required autocomplete="last_name">
+                                <input type="text" name="last_name" id="last_name" class="form-control" required
+                                       autocomplete="last_name">
                                 <div id="last_name-error" class="text-danger error-display" role="alert"></div>
                             </div>
-
                         </div>
 
                         <div class="row">
@@ -163,8 +166,8 @@
                             </div>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="description">Description <span class="text-danger">*</span></label>
-                            <textarea  name="description" id="description" class="form-control"></textarea>
+                            <label for="description">Description <span class="text-danger"></span></label>
+                            <textarea name="description" id="description" class="form-control"></textarea>
                             <div id="description-error" class="text-danger error-display" role="alert"></div>
                         </div>
                         <div class="my-3">
@@ -290,7 +293,7 @@
                     {data: 'email', name: 'email'},
                     {data: 'phone', name: 'phone'},
                     {data: 'country', name: 'country'},
-                    {data: 'city', name: 'towns.name',},
+                    {data: 'town', name: 'town',},
                     {data: 'address', name: 'address'},
                     // {data: 'user', name: 'users.email',},
                     {data: 'actionbtn', name: 'actionbtn', orderable: false, searchable: false},
@@ -298,7 +301,7 @@
                 ],
                 order: ['1', 'desc']
             });
-            $('#infosTable_filter').addClass('col-md-6 float-right')
+            $('#infosTable_filter').addClass('col-md-4 float-right')
             $('#infosTable_info').addClass('col-md-6 float-left')
             $('#infosTable_paginate').addClass('col-md-6 float-right')
 
@@ -398,7 +401,7 @@
                         $('#save-form')[0].reset();
                         Toast.fire({
                             icon: 'success',
-                            title: res.message
+                            title: response.message
                         });
                     } else {
                         $('#save-btn').attr("disabled", false);

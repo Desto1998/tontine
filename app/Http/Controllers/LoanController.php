@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
+use App\Services\ContributionService;
 use App\Services\LoanService;
 use App\Services\LogService;
+use App\Services\MemberService;
 use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
@@ -19,8 +21,9 @@ class LoanController extends Controller
      * Create a new controller instance.
      * @param LogService $logService
      * @param loanService $loanService
+     * @param MemberService $memberService
      */
-    public function __construct(private LogService $logService, private LoanService $loanService)
+    public function __construct(private LogService $logService, private LoanService $loanService, private MemberService $memberService, private ContributionService $contributionService)
     {
     }
 
@@ -30,7 +33,9 @@ class LoanController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('loan.loan-list');
+        $members = $this->memberService->getAll();
+        $contributions = $this->contributionService->getAll();
+        return view('loan.loan-list', compact('members', 'contributions'));
     }
 
     /**
@@ -51,7 +56,7 @@ class LoanController extends Controller
     public function show($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
         $session = $this->loanService->show($id);
-        return view('session.session-edit',compact('session'));
+        return view('session.session-edit', compact('session'));
     }
 
     /**
@@ -62,22 +67,21 @@ class LoanController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'amount' => ['required','numeric'],
-            'reason' => ['required','string','max:255'],
+            'amount' => ['required', 'numeric'],
+            'reason' => ['required', 'string', 'max:255'],
             'type' => ['required'],
-            'interest' => ['required','numeric'],
+            'interest' => ['required', 'numeric'],
             'interest_type' => ['required'],
-            'total_amount' => ['required','numeric'],
+            'total_amount' => ['required', 'numeric'],
             'return_date' => ['required'],
-            'contribution_id' => ['required','exists:contributions,id'],
-            'member_id' => ['required','exists:members,id'],
-            'meeting_id' => ['required','exists:meetings,id'],
+            'contribution_id' => ['required', 'exists:contributions,id'],
+            'member_id' => ['required', 'exists:members,id'],
+//            'meeting_id' => ['required','exists:meetings,id'],
 
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
         }
 //        $request->all()['association_id'] = \Auth::user()->association_id;
         $request->all()['user_id'] = \Auth::user()->id;
@@ -85,7 +89,7 @@ class LoanController extends Controller
         $session = $this->loanService->store($request->all());
         if ($session) {
 //            $this->loanService->saveSessionMembers($request->all()['member_ids'],$session->id );
-            $this->logService->save("Enregistrement", 'Loan', "Enregistrement d'un pret ID: $session->id le" . now()." Donne: $session", $session->id);
+            $this->logService->save("Enregistrement", 'Loan', "Enregistrement d'un pret ID: $session->id le" . now() . " Donne: $session", $session->id);
         }
 
         return response()->json([
@@ -105,28 +109,36 @@ class LoanController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Loan::join('users','loans.user_id','loans.id')
-                ->join('contributions','loans.contribution_id','contributions.id')
+            $data = Loan::join('users', 'loans.user_id', 'users.id')
+                ->join('contributions', 'loans.contribution_id', 'contributions.id')
+                ->join('members', 'members.id', 'loans.member_id')
                 ->where('loans.deleted_by', null)
-//                ->where('contributions.association_id', \Auth::user()->association_id)
+                ->where('contributions.association_id', \Auth::user()->association_id)
                 ->orderBy('loans.id', 'desc')
-                ->select('loans.*','users.first_name as user','contributions.name as contribution');
+                ->select('loans.*', 'users.first_name as user', 'contributions.name as contribution', 'members.first_name', 'members.last_name');
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('actionbtn', function($value){
-
-                    $action = view('loan.loan-action',compact('value'));
+                ->addColumn('actionbtn', function ($value) {
+                    $members = $this->memberService->getAll();
+                    $contributions = $this->contributionService->getAll();
+                    $action = view('loan.loan-action', compact('value', 'members', 'contributions'));
                     return (string)$action;
                 })
                 ->addColumn('checkbox', function ($value) {
                     $id = $value->id;
-                    $check = view( 'layouts.partials._checkbox', compact('id'));
+                    $check = view('layouts.partials._checkbox', compact('id'));
                     return (string)$check;
                 })
-                ->addColumn('created', function($value){
+                ->addColumn('member', function ($value) {
+                    return $value->first_name . ' ' . $value->last_name;
+                })
+                ->addColumn('statute', function ($value) {
+                    return $value->status ? "<span class='text-warning'>En attente</span>" : "<span class='text-warning'>Remboursé</span>";
+                })
+                ->addColumn('created', function ($value) {
                     return $this->logService->formatCreatedAt($value->created_at);
                 })
-                ->rawColumns(['actionbtn','checkbox','created'])
+                ->rawColumns(['actionbtn', 'checkbox', 'created', 'member','statute'])
                 ->make(true);
 
         }
@@ -136,27 +148,34 @@ class LoanController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'amount' => ['required','numeric'],
-            'reason' => ['required','string','max:255'],
+            'amount' => ['required', 'numeric'],
+            'reason' => ['required', 'string', 'max:255'],
             'type' => ['required'],
-            'interest' => ['required','numeric'],
+            'interest' => ['required', 'numeric'],
             'interest_type' => ['required'],
-            'total_amount' => ['required','numeric'],
+            'total_amount' => ['required', 'numeric'],
             'return_date' => ['required'],
-            'contribution_id' => ['required','exists:contributions,id'],
-            'member_id' => ['required','exists:members,id'],
-            'meeting_id' => ['required','exists:meetings,id'],
-            'id' => ['required','numeric', 'exists:sessions'],
+            'contribution_id' => ['required', 'exists:contributions,id'],
+            'member_id' => ['required', 'exists:members,id'],
+//            'meeting_id' => ['required','exists:meetings,id'],
+            'id' => ['required', 'numeric', 'exists:loans'],
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
         }
-
-        $save = $this->loanService->update($request->all()['id'],$request->all());
+        $data['amount'] = $request->input('amount');
+        $data['reason'] = $request->input('reason');
+        $data['type'] = $request->input('type');
+        $data['interest'] = $request->input('interest');
+        $data['interest_type'] = $request->input('interest_type');
+        $data['total_amount'] = $request->input('total_amount');
+        $data['return_date'] = $request->input('return_date');
+        $data['contribution_id'] = $request->input('contribution_id');
+        $data['member_id'] = $request->input('member_id');
+        $save = $this->loanService->update($request->all()['id'], $data);
         $id = $request->all()['id'];
-        $this->logService->save("Modification", 'Loan', "Modification du pret  ID: $id le" . now()." Donne: ", $request->all()['id']);
+        $this->logService->save("Modification", 'Loan', "Modification du pret  ID: $id le" . now() . " Donne: ", $request->all()['id']);
 
         return response()->json([
             'status' => 'success',
@@ -175,7 +194,7 @@ class LoanController extends Controller
         if (request()->ajax()) {
             $id = $request->input('id');
             $deleted = $this->loanService->delete($id);
-            $this->logService->save("Suppression", 'Loan', "Suppression du pret avec l'id: $id le" . now()." Donne: $deleted", $id);
+            $this->logService->save("Suppression", 'Loan', "Suppression du pret avec l'id: $id le" . now() . " Donne: $deleted", $id);
 
             return response()->json([
                 'status' => 'success',

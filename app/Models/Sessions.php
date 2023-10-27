@@ -24,13 +24,7 @@ class Sessions extends Model
         'deleted_by',
     ];
 
-    /**
-     * Get the contribution of the session.
-     */
-    public function contribution(): BelongsTo
-    {
-        return $this->belongsTo(Contribution::class);
-    }
+
 
     /**
      * Get the user that perform action.

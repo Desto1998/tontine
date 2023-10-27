@@ -16,7 +16,7 @@ class ContributionService
      */
     public function getAll() : Collection
     {
-        return Contribution::where('deleted_at')->orderBy('id')->get();
+        return Contribution::where('deleted_by')->where('association_id',\Auth::user()->association_id)->orderBy('id')->get();
     }
 
     /**
@@ -35,10 +35,10 @@ class ContributionService
      *
      * @param $id
      * @param $data
-     * @return Contribution
+     * @return bool
      */
 
-    public function update($id,$data): Contribution
+    public function update($id,$data): bool
     {
         return Contribution::where('id',$id)->update($data);
     }

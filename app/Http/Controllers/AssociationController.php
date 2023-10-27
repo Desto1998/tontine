@@ -60,11 +60,11 @@ class AssociationController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['string','min:5','max:255'],
             'phone' => ['required', 'string', 'min:9','max:14'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email','unique:users,email'],
             'country' => ['required'],
             'town' => ['required'],
 //            'description' => ['required'],
-            'first_name' => ['required'],
+            'first_name' => ['required','min:3','max:255'],
             'last_name' => ['required','string', 'min:5','max:255'],
             'password' => ['required','string', 'min:8','max:255'],
         ]);
@@ -74,13 +74,14 @@ class AssociationController extends Controller
             return response()->json(['error'=>$validator->errors()]);
         }
         $data = array();
-        $data['first_name'] = $request->input('fist_name');
+        $data['first_name'] = $request->input('first_name');
         $data['last_name'] = $request->input('last_name');
         $data['password'] = Hash::make($request->input('password'));
         $data['phone'] = $request->input('phone');
         $data['email'] = $request->input('email');
         $data['city'] = $request->input('town');
         $data['address'] = $request->input('address');
+//        $data['address'] = $request->input('address');
 
 
         $save = $this->associationService->store($request->all());
@@ -97,7 +98,7 @@ class AssociationController extends Controller
             $this->logService->save("Enregistrement", 'Member', "Enregistrement d'un membre ID: $member->id le" . now()." Donne: $member", $member->id);
             $this->logService->save("Enregistrement", 'User', "Enregistrement d'un utilisateur ID: $user->id le" . now()." Donne: $user", $user->id);
 
-            $role = $this->userService->getRoleByTitle('President ');
+            $role = $this->userService->getRoleByTitle('President');
             $this->userService->addRole($user->id,[$role->id]);
         }
 
@@ -149,9 +150,9 @@ class AssociationController extends Controller
             'email' => ['required', 'email'],
             'country' => ['required'],
             'town' => ['required'],
-            'description' => ['required'],
-            'fist_name' => ['required'],
-            'last_name' => ['required','string', 'min:5','max:255'],
+//            'description' => ['required'],
+//            'fist_name' => ['required'],
+//            'last_name' => ['required','string', 'min:5','max:255'],
             'id' => ['required','int','exists:associations'],
         ]);
 

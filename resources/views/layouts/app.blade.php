@@ -6,7 +6,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{ asset('images/logo/LOGO DIGITAL MOBILITY WHITE.PNG') }}">
-    <!-- APP Title -->
+    <!-- APP Title -->2RFC
     <title>{{ config('app.name', 'FREE') }} - @yield('title')</title>
 
 @yield('css_before')

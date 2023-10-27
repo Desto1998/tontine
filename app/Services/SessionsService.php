@@ -18,9 +18,18 @@ class SessionsService
      * Get all orders
      * @return Collection
      */
-    public function getAll() : Collection
+    public function getAll(): Collection
     {
         return Sessions::where('deleted_by')->orderBy('id')->get();
+    }
+
+    /**
+     * Get all orders
+     * @return Collection
+     */
+    public function getAllActive(): Collection
+    {
+        return Sessions::where('deleted_by')->where('status', 1)->orderBy('id')->get();
     }
 
     /**
@@ -39,12 +48,13 @@ class SessionsService
      *
      * @param $id
      * @param $data
-     * @return Sessions
+     * @return Sessions|bool
      */
 
-    public function update($id,$data): Sessions
+    public function update($id, $data): Sessions|bool
     {
-        return Sessions::where('id',$id)->update($data);
+        Sessions::where('id', $id)->update($data);
+        return Sessions::find($id);
     }
 
     /**
@@ -56,10 +66,11 @@ class SessionsService
 
     public function show($id): Sessions|BelongsTo
     {
-        //        $data['user'] = Orders::find($id)->user;
-//        $data['partner'] = Orders::find($id)->partner;
-//        $data['driver'] = Orders::find($id)->driver;
-        return Sessions::find($id)->with('association');
+//        $data = Sessions::where('session_id',$session_id)->first();
+//        $data['member'] = SessionMember::where('session_id',$session_id)->get()->member;
+//        $data['contribution'] = SessionContribution::where('session_id',$session_id)->get()->contribution;
+//        return $data;
+        return Sessions::find($id);
     }
 
     /**
@@ -67,7 +78,7 @@ class SessionsService
      * @param $id
      * @return bool
      */
-    public function delete($id) : bool
+    public function delete($id): bool
     {
         $find = Sessions::find($id);
 //        $find->deleted_at = date('Y-m-d H:i:s');
@@ -82,16 +93,17 @@ class SessionsService
      * @param $session_id
      * @return array
      */
-    public function saveSessionMembers($memberIds, $session_id) : array
+    public function saveSessionMembers($memberIds, $session_id): array
     {
-       $saved = [];
-       foreach ($memberIds as $key=> $mid){
-          $saved[$key] = SessionMember::create([
-               'member_id' => $mid,
-               'session_id' => $session_id,
-               'user_id' => \Auth::id()
-           ]);
-       }
+        SessionMember::where('session_id', $session_id)->delete();
+        $saved = [];
+        foreach ($memberIds as $key => $mid) {
+            $saved[$key] = SessionMember::create([
+                'member_id' => $mid,
+                'session_id' => $session_id,
+                'user_id' => \Auth::id()
+            ]);
+        }
         return $saved;
     }
 
@@ -101,16 +113,16 @@ class SessionsService
      * @param $session_id
      * @return array
      */
-    public function saveSessionContribution($contributionIds, $session_id) : array
+    public function saveSessionContribution($contributionIds, $session_id): array
     {
-        SessionContribution::where('session_id',$session_id)->delete();
-       $saved = [];
-       foreach ($contributionIds as $key=> $cid){
-          $saved[$key] = SessionMember::create([
-               'contribution_id' => $cid,
-               'session_id' => $session_id,
-           ]);
-       }
+        SessionContribution::where('session_id', $session_id)->delete();
+        $saved = [];
+        foreach ($contributionIds as $key => $cid) {
+            $saved[$key] = SessionContribution::create([
+                'contribution_id' => $cid,
+                'session_id' => $session_id,
+            ]);
+        }
         return $saved;
     }
 
@@ -119,9 +131,9 @@ class SessionsService
      * @param $session_id
      * @return bool
      */
-    public function canEditSessionContribution($session_id) : bool
+    public function canEditSessionContribution($session_id): bool
     {
-        $meeting = Meeting::where('session_id',$session_id)->get();
+        $meeting = Meeting::where('session_id', $session_id)->get();
         return count($meeting) ?? false;
     }
 
@@ -132,13 +144,13 @@ class SessionsService
      * @param $take_order
      * @return SessionMember|bool|null
      */
-    public function updateSessionMember($smId, $amount,$take_order) : SessionMember | null|bool
+    public function updateSessionMember($smId, $amount, $take_order): SessionMember|null|bool
     {
-            return SessionMember::where('id',$smId)->update([
+        return SessionMember::where('id', $smId)->update([
 //                'member_id' => $smId,
-                'amount' => $amount,
-                'take_order' => $take_order
-            ]);
+            'amount' => $amount,
+            'take_order' => $take_order
+        ]);
 
     }
 
@@ -148,13 +160,13 @@ class SessionsService
      * @param $amount
      * @return SessionMember|bool|null
      */
-    public function setSMasTaken($smId, $amount) : SessionMember | null|bool
+    public function setSMasTaken($smId, $amount): SessionMember|null|bool
     {
-            return SessionMember::where('id',$smId)->update([
-                'taken' => 1,
-                'taken_date' => date('Y-m-d'),
-                'taken_amount' => $amount
-            ]);
+        return SessionMember::where('id', $smId)->update([
+            'taken' => 1,
+            'taken_date' => date('Y-m-d'),
+            'taken_amount' => $amount
+        ]);
 
     }
 
@@ -163,11 +175,36 @@ class SessionsService
      * @param $smId
      * @return SessionMember|bool|null
      */
-    public function deleteSessionMember($smId) : SessionMember | null|bool
+    public function deleteSessionMember($smId): SessionMember|null|bool
     {
-            return SessionMember::where('id',$smId)->update([
-                'deleted_by' => \Auth::id(),
-            ]);
+        return SessionMember::where('id', $smId)->update([
+            'deleted_by' => \Auth::id(),
+        ]);
 
+    }
+
+    /**
+     * Get a session member
+     *
+     * @param $session_id
+     * @return Collection|\Illuminate\Database\Eloquent\Builder[]
+     */
+
+    public function sessionMembers($session_id): array|Collection
+    {
+        return SessionMember::with('member')->where('session_id',$session_id)->get();
+
+    }
+
+    /**
+     * Get a session contribution
+     *
+     * @param $session_id
+     * @return Collection|\Illuminate\Database\Eloquent\Builder[]
+     */
+
+    public function sessionContributions($session_id): array|Collection
+    {
+        return SessionContribution::with('contribution')->where('session_id',$session_id)->get();
     }
 }

@@ -14,6 +14,6 @@ class Sanctions extends Model
         'description',
         'association_id',
         'user_id',
-        'amount',
+//        'amount',
     ];
 }

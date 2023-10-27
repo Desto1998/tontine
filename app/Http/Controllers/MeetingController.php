@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Sessions;
 use App\Services\LogService;
+use App\Services\MeetingService;
+use App\Services\MemberService;
 use App\Services\SanctionService;
 use App\Services\SessionsService;
+use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +24,8 @@ class MeetingController extends Controller
      * @param SanctionService $sanctionService
      * @param SessionsService $sessionsService
      */
-    public function __construct(private LogService $logService,  private SanctionService $sanctionService, private SessionsService $sessionsService)
+    public function __construct(private LogService $logService,  private SanctionService $sanctionService, private SessionsService $sessionsService,
+    private MemberService $memberService, private MeetingService $meetingService)
     {
     }
 
@@ -40,8 +44,31 @@ class MeetingController extends Controller
      */
     public function create(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-//        $session = $this->sessionsService->show($id);
-        return view('meeting.meeting-create');
+        $sessions = $this->sessionsService->getAllActive();
+        $members = $this->memberService->getAll();
+        return view('meeting.meeting-create', compact('sessions','members'));
+    }
+
+    /**
+     * Edit.
+     * @param $id
+     * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+     */
+    public function edit($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        $meeting = $this->meetingService->show($id);
+        $sessions = $this->sessionsService->getAllActive();
+        $members = $this->memberService->getAll();
+        $sanctions = $this->sanctionService->getAll();
+        $sessionMembers = $this->sessionsService->sessionMembers($meeting->session_id);
+        $sessionContributions = $this->sessionsService->sessionContributions($meeting->session_id);
+
+        $meetingLoans  = $this->meetingService->meetingLoans($meeting->id);
+        $meetingSanctions  = $this->meetingService->meetingSanctions($meeting->id);
+        $meetingFunds  = $this->meetingService->meetingFunds($meeting->id);
+        $meetingSessionMembers  = $this->meetingService->meetingSessionMembers($meeting->id);
+//        dd($sessionContributions);
+        return view('meeting.meeting-edit', compact('sessions','members','meeting','sanctions'));
     }
 
     /**
@@ -63,14 +90,13 @@ class MeetingController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required','required','string','min:5'],
-            'type' => ['required','string','max:255'],
-            'frequency' => ['required'],
-            'meeting_day' => ['required'],
-            'start_date' => ['required','date'],
-            'contribution_id' => ['required','exists:contributions,id'],
-            'member_ids' => ['required','array'],
-            'member_ids.*' => ['integer','exists:members,id'],
+            'name' => ['string'],
+            'comment' => ['string'],
+            'date' => ['required','date'],
+            'start_time' => ['required'],
+            'end_time' => ['required'],
+            'agenda' => ['required','string'],
+            'coordinator' => ['integer','exists:members,id'],
 
         ]);
 
@@ -81,16 +107,16 @@ class MeetingController extends Controller
 //        $request->all()['association_id'] = \Auth::user()->association_id;
         $request->all()['user_id'] = \Auth::user()->id;
 
-        $session = $this->sessionsService->store($request->all());
-        if ($session) {
-            $this->sessionsService->saveSessionMembers($request->all()['member_ids'],$session->id );
-            $this->logService->save("Enregistrement", 'Sessions', "Enregistrement d'une Sessions ID: $session->id le" . now()." Donne: $session", $session->id);
+        $meeting = $this->meetingService->store($request->all());
+        if ($meeting) {
+//            $this->sessionsService->saveSessionMembers($request->all()['member_ids'],$session->id );
+            $this->logService->save("Enregistrement", 'Sessions', "Enregistrement d'une Sessions ID: $meeting->id le" . now()." Donne: $meeting", $meeting->id);
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Fond enregistrée avec succès.',
-            'data' => $session,
+            'message' => 'Reunion avec succès.',
+            'data' => $meeting,
         ]);
 
     }

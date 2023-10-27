@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('session_members', function (Blueprint $table) {
             $table->id();
-            $table->float('amount');
+            $table->float('amount')->nullable();
             $table->integer('take_order')->default(0);
             $table->boolean('taken')->default(false);
             $table->date('taken_date')->nullable();

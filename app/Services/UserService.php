@@ -204,7 +204,7 @@ class UserService
     public function getRoleByTitle($title): Role|null
     {
         $role = Role::where('title', $title)->first();
-        return count($role);
+        return $role;
     }
 
     /**

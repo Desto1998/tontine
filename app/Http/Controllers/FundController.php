@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fund;
-use App\Models\Member;
-use App\Services\AssociationService;
 use App\Services\FundService;
 use App\Services\LogService;
 use App\Services\MemberService;
-use App\Services\UserService;
 use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
@@ -24,8 +21,9 @@ class FundController extends Controller
      * Create a new controller instance.
      * @param LogService $logService
      * @param FundService $fundService
+     * @param MemberService $memberService
      */
-    public function __construct(private LogService $logService,  private FundService $fundService)
+    public function __construct(private LogService $logService,  private FundService $fundService, private MemberService $memberService)
     {
     }
 
@@ -35,7 +33,8 @@ class FundController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('fund.fund-list');
+        $members = $this->memberService->getAll();
+        return view('fund.fund-list',compact('members'));
     }
 
 
@@ -68,18 +67,21 @@ class FundController extends Controller
         {
             return response()->json(['error'=>$validator->errors()]);
         }
-        $request->all()['association_id'] = \Auth::user()->association_id;
-        $request->all()['user_id'] = \Auth::user()->id;
+        $data = array();
+        $data['description'] = $request->input('description');
+        $data['amount'] = $request->input('amount');
+        $data['member_id'] = $request->input('member_id');
+//        $data['association_id'] = \Auth::user()->association_id;
+        $data['user_id'] = \Auth::user()->id;
 
-
-        $member = $this->fundService->store($request->all());
+        $member = $this->fundService->store($data);
         if ($member) {
             $this->logService->save("Enregistrement", 'Fund', "Enregistrement d'un fond ID: $member->id le" . now()." Donne: $member", $member->id);
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Fond enregistrée avec succès.',
+            'message' => 'Fond enregistré avec succès.',
             'data' => $member,
         ]);
 
@@ -95,21 +97,25 @@ class FundController extends Controller
         if (request()->ajax()) {
 
             $data = Fund::where('funds.deleted_by', null)
-                ->join('members','funds.member_id','users.id')
+                ->where('members.association_id', \Auth::user()->association_id)
+                ->join('members','funds.member_id','members.id')
                 ->join('users','funds.user_id','users.id')
                 ->orderBy('funds.id', 'desc')
-                ->select('funds.*','members.first_name as member','users.first_name as user');
+                ->select('funds.*','members.first_name','members.last_name','users.first_name as user');
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('actionbtn', function($value){
-
-                    $action = view('fund.fund-action',compact('value'));
+                    $members = $this->memberService->getAll();
+                    $action = view('fund.fund-action',compact('value','members'));
                     return (string)$action;
                 })
                 ->addColumn('checkbox', function ($value) {
                     $id = $value->id;
                     $check = view('layouts.partials._checkbox', compact('id'));
                     return (string)$check;
+                })
+                ->addColumn('member', function ($value) {
+                    return $value->first_name.' '.$value->last_name;
                 })
                 ->addColumn('created', function($value){
                     return $this->logService->formatCreatedAt($value->created_at);
@@ -134,8 +140,10 @@ class FundController extends Controller
         {
             return response()->json(['error'=>$validator->errors()]);
         }
-
-        $save = $this->fundService->update($request->all()['id'],$request->all());
+        $data['description'] = $request->input('description');
+        $data['amount'] = $request->input('amount');
+        $data['member_id'] = $request->input('member_id');
+        $save = $this->fundService->update($request->all()['id'],$data);
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Fund', "Modification des informations du fond ID: $id le" . now()." Donne: ", $request->all()['id']);
 

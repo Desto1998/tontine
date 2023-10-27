@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sessions;
+use App\Services\ContributionService;
 use App\Services\LogService;
+use App\Services\MemberService;
 use App\Services\SanctionService;
 use App\Services\SessionsService;
 use DataTables;
@@ -20,10 +22,11 @@ class SessionsController extends Controller
     /**
      * Create a new controller instance.
      * @param LogService $logService
-     * @param SanctionService $sanctionService
      * @param SessionsService $sessionsService
+     * @param ContributionService $contributionService
+     * @param MemberService $memberService
      */
-    public function __construct(private LogService $logService, private SessionsService $sessionsService)
+    public function __construct(private LogService $logService, private SessionsService $sessionsService, private ContributionService $contributionService, private MemberService $memberService)
     {
     }
 
@@ -33,9 +36,23 @@ class SessionsController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('session.session-list');
+        $contributions = $this->contributionService->getAll();
+        $members = $this->memberService->getAll();
+        return view('session.session-list', compact('contributions','members'));
     }
 
+    /**
+     * View user detail.
+     * @param $id
+     * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+     */
+    public function edit($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        $contributions = $this->contributionService->getAll();
+        $members = $this->memberService->getAll();
+        $session = $this->sessionsService->show($id);
+        return view('session.session-edit',compact('session','members','contributions'));
+    }
 
     /**
      * View user detail.
@@ -74,7 +91,7 @@ class SessionsController extends Controller
             return response()->json(['error'=>$validator->errors()]);
         }
 //        $request->all()['association_id'] = \Auth::user()->association_id;
-        $request->all()['user_id'] = \Auth::user()->id;
+//        $request->all()['user_id'] = \Auth::user()->id;
 
         $session = $this->sessionsService->store($request->all());
         if ($session) {
@@ -101,11 +118,10 @@ class SessionsController extends Controller
         if (request()->ajax()) {
 
             $data = Sessions::join('users','sessions.user_id','users.id')
-                ->join('contributions','sessions.contribution_id','contributions.id')
                 ->where('sessions.deleted_by', null)
-                ->where('contributions.association_id', \Auth::user()->association_id)
+                ->where('users.association_id', \Auth::user()->association_id)
                 ->orderBy('sessions.id', 'desc')
-                ->select('sessions.*','users.first_name as user','contributions.name as contribution');
+                ->select('sessions.*','users.first_name as user');
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('actionbtn', function($value){
@@ -121,7 +137,10 @@ class SessionsController extends Controller
                 ->addColumn('created', function($value){
                     return $this->logService->formatCreatedAt($value->created_at);
                 })
-                ->rawColumns(['actionbtn','checkbox','created'])
+                ->addColumn('statute', function($value){
+                    return $value->status ? "<span class=\"badge badge-info right\">Actif</span>" : "<span class=\"badge badge-danger right\">Cloturé</span>";
+                })
+                ->rawColumns(['actionbtn','checkbox','created','statute'])
                 ->make(true);
 
         }
@@ -131,8 +150,8 @@ class SessionsController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'amount' => ['required','numeric','string','min:5'],
-            'take_order' => ['required','string','max:255'],
+//            'amount' => ['required','numeric','string','min:5'],
+//            'take_order' => ['required','string','max:255'],
             'frequency' => ['required'],
             'meeting_day' => ['required'],
             'start_date' => ['required','date'],
@@ -147,11 +166,19 @@ class SessionsController extends Controller
         {
             return response()->json(['error'=>$validator->errors()]);
         }
-        $this->sessionsService->saveSessionContribution($request->all()['contribution_ids'],$session->id );
 
-        $save = $this->sessionsService->update($request->all()['id'],$request->all());
-        $id = $request->all()['id'];
-        $this->logService->save("Modification", 'Session', "Modification de la Sessions  ID: $id le" . now()." Donne: ", $request->all()['id']);
+        $data = array();
+        $data['frequency'] = $request->input('frequency');
+        $data['meeting_day'] = $request->input('meeting_day');
+        $data['start_date'] = $request->input('start_date');
+        $save = $this->sessionsService->update($request->all()['id'],$data);
+        if ($save) {
+            $this->sessionsService->saveSessionMembers($request->all()['member_ids'],$save->id );
+            $this->sessionsService->saveSessionContribution($request->all()['contribution_ids'],$save->id );
+            $id = $request->all()['id'];
+            $this->logService->save("Modification", 'Session', "Modification de la Sessions  ID: $id le" . now()." Donne: ", $request->all()['id']);
+
+        }
 
         return response()->json([
             'status' => 'success',

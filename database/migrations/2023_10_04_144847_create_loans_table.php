@@ -27,7 +27,7 @@ return new class extends Migration
             $table->unsignedBigInteger('contribution_id')->nullable();
             $table->unsignedBigInteger('create_id')->nullable();
             $table->unsignedBigInteger('member_id');
-            $table->unsignedBigInteger('meeting_id');
+            $table->unsignedBigInteger('meeting_id')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')

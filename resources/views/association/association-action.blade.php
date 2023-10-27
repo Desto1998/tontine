@@ -66,7 +66,7 @@
                         <div id="address-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="description">Description <span class="text-danger">*</span></label>
+                        <label for="description">Description <span class="text-danger"></span></label>
                         <textarea  name="description" id="description" class="form-control">{{ $value->description }}</textarea>
                         <div id="description-error" class="text-danger error-display" role="alert"></div>
                     </div>

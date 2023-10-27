@@ -35,10 +35,10 @@ class LoanService
      *
      * @param $id
      * @param $data
-     * @return Loan
+     * @return bool
      */
 
-    public function update($id,$data): Loan
+    public function update($id,$data): bool
     {
         return Loan::where('id',$id)->update($data);
     }

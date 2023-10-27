@@ -60,13 +60,13 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => ['required','string','min:5','max:255'],
-            'last_name' => ['required','string','min:5','max:255'],
+            'first_name' => ['required','string','min:3','max:255'],
+            'last_name' => ['required','string','min:3','max:255'],
             'phone' => ['required', 'string', 'min:9','max:14'],
-            'address' => ['required', 'email'],
+            'address' => ['required'],
             'city' => ['required'],
             'fund_amount' => ['required','numeric'],
-            'has_fund' => ['required'],
+//            'has_fund' => ['required'],
         ]);
 
         if ($validator->fails())
@@ -74,15 +74,15 @@ class MemberController extends Controller
             return response()->json(['error'=>$validator->errors()]);
         }
         $data = array();
-        $data['first_name'] = $request->input('fist_name');
+        $data['first_name'] = $request->input('first_name');
         $data['last_name'] = $request->input('last_name');
         $data['password'] = Hash::make($request->input('password'));
         $data['phone'] = $request->input('phone');
         $data['email'] = $request->input('email');
-        $data['city'] = $request->input('town');
+        $data['city'] = $request->input('city');
         $data['address'] = $request->input('address');
         $data['association_id'] = \Auth::user()->association_id;
-        $data['has_fund'] = $request->input('has_fund');
+//        $data['has_fund'] = $request->input('has_fund');
         $data['fund_amount'] = $request->input('fund_amount');
         $member = $this->memberService->store($data);
         if ($member) {
@@ -106,7 +106,8 @@ class MemberController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Member::where('members.deleted_at', null)
+            $data = Member::where('association_id',\Auth::user()->association_id)
+                ->where('members.deleted_at', null)
 //                ->join('users','members.user_id','users.id')
                 ->orderBy('members.id', 'desc')
                 ->select('members.*');
@@ -138,10 +139,10 @@ class MemberController extends Controller
             'first_name' => ['required','string','min:5','max:255'],
             'last_name' => ['required','string','min:5','max:255'],
             'phone' => ['required', 'string', 'min:9','max:14'],
-            'address' => ['required', 'email'],
+            'address' => ['required'],
             'city' => ['required'],
             'fund_amount' => ['required','numeric'],
-            'has_fund' => ['required'],
+//            'has_fund' => ['required'],
             'id' => ['required','numeric', 'exists:members'],
         ]);
 
@@ -150,13 +151,11 @@ class MemberController extends Controller
             return response()->json(['error'=>$validator->errors()]);
         }
         $data = array();
-        $data['first_name'] = $request->input('fist_name');
+        $data['first_name'] = $request->input('first_name');
         $data['last_name'] = $request->input('last_name');
         $data['phone'] = $request->input('phone');
-        $data['email'] = $request->input('email');
-        $data['city'] = $request->input('town');
+        $data['city'] = $request->input('city');
         $data['address'] = $request->input('address');
-        $data['has_fund'] = $request->input('has_fund');
         $data['fund_amount'] = $request->input('fund_amount');
         $save = $this->memberService->update($request->all()['id'],$data);
         $id = $request->all()['id'];

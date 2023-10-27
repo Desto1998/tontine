@@ -16,7 +16,7 @@ class SanctionService
      */
     public function getAll() : Collection
     {
-        return Sanctions::where('deleted_by')->orderBy('id')->get();
+        return Sanctions::where('deleted_by')->where('association_id', \Auth::user()->association_id)->orderBy('id')->get();
     }
 
     /**
@@ -35,10 +35,10 @@ class SanctionService
      *
      * @param $id
      * @param $data
-     * @return Sanctions
+     * @return bool
      */
 
-    public function update($id,$data): Sanctions
+    public function update($id,$data): bool
     {
         return Sanctions::where('id',$id)->update($data);
     }
@@ -61,12 +61,12 @@ class SanctionService
     /**
      * Delete association
      * @param $id
-     * @return bool
+     * @return bool|Sanctions
      */
-    public function delete($id) : bool
+    public function delete($id) : bool|Sanctions
     {
         $find = Sanctions::find($id);
-        $find->deleted_at = date('Y-m-d H:i:s');
+        $find->deleted_by = \Auth::id();
 //        $driver->deleted_by = \auth()->id();
         return $find->save();
 

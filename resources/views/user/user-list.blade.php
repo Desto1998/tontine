@@ -51,7 +51,7 @@
                             <th>En ligne?</th>
                             <th>Status</th>
                             <th>Role</th>
-                            <th>Action</th>
+                            <th data-priority="2">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -173,7 +173,7 @@
                 ],
                 order: ['1', 'desc']
             });
-            $('#logsListDT_filter').addClass('col-md-6 float-right')
+            $('#logsListDT_filter').addClass('col-md-4 float-right')
             $('#logsListDT_info').addClass('col-md-6 float-left')
             $('#logsListDT_paginate').addClass('col-md-6 float-right')
 

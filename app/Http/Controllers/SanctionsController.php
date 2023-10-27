@@ -56,7 +56,7 @@ class SanctionsController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => ['required','string','min:0'],
             'description' => ['string','max:255'],
-            'amount' => ['required', 'numeric', 'exists:members,id'],
+//            'amount' => ['required', 'numeric', 'exists:members,id'],
 
         ]);
 
@@ -64,13 +64,17 @@ class SanctionsController extends Controller
         {
             return response()->json(['error'=>$validator->errors()]);
         }
-        $request->all()['association_id'] = \Auth::user()->association_id;
-        $request->all()['user_id'] = \Auth::user()->id;
 
 
-        $member = $this->sanctionService->store($request->all());
+        $data = array();
+        $data['title'] = $request->input('title');
+        $data['description'] = $request->input('description');
+        $data['association_id'] = \Auth::user()->association_id;
+        $data['user_id'] = \Auth::id();
+
+        $member = $this->sanctionService->store($data);
         if ($member) {
-            $this->logService->save("Enregistrement", 'Fund', "Enregistrement d'une santion ID: $member->id le" . now()." Donne: $member", $member->id);
+            $this->logService->save("Enregistrement", 'Sanctions', "Enregistrement d'une santion ID: $member->id le" . now()." Donne: $member", $member->id);
         }
 
         return response()->json([
@@ -90,10 +94,11 @@ class SanctionsController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Sanctions::where('sanctions.deleted_by', null)
-                ->join('users','funds.user_id','users.id')
-                ->orderBy('funds.id', 'desc')
-                ->select('funds.*','users.first_name as user');
+            $data = Sanctions::join('users','sanctions.user_id','users.id')
+                ->where('sanctions.deleted_by', null)
+                ->where('sanctions.association_id', \Auth::user()->association_id)
+                ->orderBy('sanctions.id', 'desc')
+                ->select('sanctions.*','users.first_name as user');
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('actionbtn', function($value){
@@ -121,7 +126,7 @@ class SanctionsController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => ['required','string','min:0'],
             'description' => ['string','max:255'],
-            'amount' => ['required', 'numeric', 'exists:members,id'],
+//            'amount' => ['required', 'numeric', 'exists:members,id'],
             'id' => ['required','numeric', 'exists:sanctions'],
         ]);
 
@@ -129,8 +134,12 @@ class SanctionsController extends Controller
         {
             return response()->json(['error'=>$validator->errors()]);
         }
-
-        $save = $this->sanctionService->update($request->all()['id'],$request->all());
+        $data = array();
+        $data['title'] = $request->input('title');
+        $data['description'] = $request->input('description');
+//        $data['association_id'] = \Auth::user()->association_id;
+//        $data['user_id'] = \Auth::id();
+        $save = $this->sanctionService->update($request->all()['id'],$data);
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Sanction', "Modification de la sanction membre ID: $id le" . now()." Donne: ", $request->all()['id']);
 

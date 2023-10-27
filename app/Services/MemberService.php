@@ -17,7 +17,7 @@ class MemberService
      */
     public function getAll() : Collection
     {
-        return Member::where('deleted_at')->orderBy('id')->get();
+        return Member::where('deleted_at')->where('association_id', \Auth::user()->association_id)->orderBy('id')->get();
     }
 
     /**
@@ -36,10 +36,10 @@ class MemberService
      *
      * @param $id
      * @param $data
-     * @return Member
+     * @return bool
      */
 
-    public function update($id,$data): Member
+    public function update($id,$data): bool
     {
         return Member::where('id',$id)->update($data);
     }

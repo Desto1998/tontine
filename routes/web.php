@@ -47,7 +47,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('members/{id}', 'show')->name('members.show');
                 Route::post('members/store', 'store')->name('members.store');
                 Route::post('members/update', 'update')->name('members.update');
-                Route::post('members/destroy', 'destroy')->name('members.delete');
+                Route::delete('members/destroy', 'destroy')->name('members.delete');
             });
 
             Route::controller(FundController::class)->group(function () {
@@ -56,7 +56,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('fund/{id}', 'show')->name('fund.show');
                 Route::post('fund/store', 'store')->name('fund.store');
                 Route::post('fund/update', 'update')->name('fund.update');
-                Route::post('fund/destroy', 'destroy')->name('fund.delete');
+                Route::delete('fund/destroy', 'destroy')->name('fund.delete');
             });
 
             Route::controller(SanctionsController::class)->group(function () {
@@ -65,7 +65,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('sanction/{id}', 'show')->name('sanction.show');
                 Route::post('sanction/store', 'store')->name('sanction.store');
                 Route::post('sanction/update', 'update')->name('sanction.update');
-                Route::post('sanction/destroy', 'destroy')->name('sanction.delete');
+                Route::delete('sanction/destroy', 'destroy')->name('sanction.delete');
             });
 
             Route::controller(ContributionController::class)->group(function () {
@@ -74,7 +74,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('contribution/{id}', 'show')->name('contribution.show');
                 Route::post('contribution/store', 'store')->name('contribution.store');
                 Route::post('contribution/update', 'update')->name('contribution.update');
-                Route::post('contribution/destroy', 'destroy')->name('contribution.delete');
+                Route::delete('contribution/destroy', 'destroy')->name('contribution.delete');
             });
 
             Route::controller(LoanController::class)->group(function () {
@@ -83,18 +83,19 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('loan/{id}', 'show')->name('loan.show');
                 Route::post('loan/store', 'store')->name('loan.store');
                 Route::post('loan/update', 'update')->name('loan.update');
-                Route::post('loan/destroy', 'destroy')->name('loan.delete');
+                Route::delete('loan/destroy', 'destroy')->name('loan.delete');
             });
 
             Route::controller(SessionsController::class)->group(function () {
                 Route::get('sessions', 'index')->name('sessions.index');
                 Route::get('sessions/load', 'load')->name('sessions.load');
                 Route::get('sessions/{id}', 'show')->name('sessions.show');
+                Route::get('sessions/edit/{id}', 'edit')->name('sessions.edit');
                 Route::post('sessions/store', 'store')->name('sessions.store');
                 Route::post('sessions/update', 'update')->name('sessions.update');
-                Route::post('sessions/destroy', 'destroy')->name('sessions.delete');
+                Route::delete('sessions/destroy', 'destroy')->name('sessions.delete');
 
-                Route::post('sessions/member/destroy', 'deleteSessionMember')->name('member-session-delete');
+                Route::delete('sessions/member/destroy', 'deleteSessionMember')->name('member-session-delete');
                 Route::post('sessions/member/taken', 'markAsTaken')->name('sessions.member.taken');
                 Route::post('sessions/member/update', 'updateSessionMember')->name('sessions.member.update');
 
@@ -107,11 +108,12 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('meeting/load', 'load')->name('meeting.load');
                 Route::get('meeting/create', 'create')->name('meeting.create');
                 Route::get('meeting/{id}', 'show')->name('meeting.show');
+                Route::get('meeting/edit/{id}', 'edit')->name('meeting.edit');
                 Route::post('meeting/store', 'store')->name('meeting.store');
                 Route::post('meeting/update', 'update')->name('meeting.update');
-                Route::post('meeting/destroy', 'destroy')->name('meeting.delete');
+                Route::delete('meeting/destroy', 'destroy')->name('meeting.delete');
 
-                Route::post('meeting/member/destroy', 'deleteSessionMember')->name('member-session-delete');
+                Route::delete('meeting/member/destroy', 'deleteSessionMember')->name('meeting-member-delete');
                 Route::post('meeting/member/taken', 'markAsTaken')->name('meeting.member.taken');
                 Route::post('meeting/member/update', 'updateSessionMember')->name('meeting.member.update');
 
@@ -140,8 +142,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('associations/{id}', 'show')->name('admin.associations.show');
                 Route::post('associations/store', 'store')->name('admin.associations.store');
                 Route::post('associations/update', 'update')->name('admin.associations.update');
-                Route::post('associations/destroy', 'destroy')->name('admin.associations.delete');
-                Route::post('associations/destroy', 'destroy')->name('admin.associations.delete');
+                Route::delete('associations/destroy', 'destroy')->name('admin.associations.delete');
             });
 
             Route::controller(LogController::class)->group(function () {

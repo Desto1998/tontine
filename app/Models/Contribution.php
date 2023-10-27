@@ -19,7 +19,6 @@ class Contribution extends Model
         'user_id',
         'association_id',
         'deleted_by',
-
     ];
 
     /**

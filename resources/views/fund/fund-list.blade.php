@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title','Associations')
+@section('title','Loans')
 @section('css_before')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('AdminLTE-3.2.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -21,13 +21,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>GESTION DES MEMBRES</h1>
+                        <h1>GESTION DES FONDS</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active"><a href="#">Associations</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Membre</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Funds</a></li>
                         </ol>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Liste des associations</h3>
+                    <h3 class="card-title">Liste des fonds</h3>
                     <button type="button" class="btn btn-primary float-right" data-toggle="modal"
                             data-target="#modal-default">
                         Ajouter
@@ -52,13 +52,12 @@
                         <tr>
                             <th><input type="checkbox" id="check_" name="contact_form_message_id"></th>
                             <th>#</th>
-                            <th>Nom</th>
-                            <th>Prenom</th>
-                            <th>Telephone</th>
-                            <th>Ville</th>
-                            <th>Adresse</th>
-                            <th>Fond</th>
-                            <th>Action</th>
+                            <th>Membre</th>
+                            <th>Montant</th>
+                            <th>Description</th>
+                            <th>Créé le</th>
+                            <th>Créé par</th>
+                            <th data-priority="2">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -86,62 +85,37 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Ajouter un partenaire</h4>
+                    <h4 class="modal-title">Ajouter un prèt</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <form action="#" id="save-form" method="post">
-                        <div class="row">
-                            <div class="form-group col-md-6 mb-3"><div class="form-group col-md-6 mb-3">
-                                    <label for="first_name">Nom d'un membre<span class="text-danger">*</span></label>
-                                    <input type="text" name="first_name" id="first_name" class="form-control" required autocomplete="first_name">
-                                    <div id="first_name-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-
-                                <label for="last_name">Prenom du membre<span class="text-danger">*</span></label>
-                                <input type="text" name="last_name" id="last_name" class="form-control" required autocomplete="last_name">
-                                <div id="last_name-error" class="text-danger error-display" role="alert"></div>
-                            </div>
+                        @csrf
+                        <div class="form-group mb-3">
+                            <label for="amount">Montant <span class="text-danger">*</span></label>
+                            <input type="number" min="0" name="amount" id="amount"
+                                   class="form-control" required autocomplete="amount">
+                            <div id="amount-error" class="text-danger error-display" role="alert"></div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="member_id">Membres <span class="text-danger">*</span></label>
+                            <select name="member_id" id="member_id" class="form-control select2">
+                                <option></option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}">{{ $member->first_name }} {{ $member->last_name }}</option>
+                                @endforeach
+                            </select>
+                            <div id="member_id-error" class="text-danger error-display" role="alert"></div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="description">Description <span class="text-danger">*</span></label>
+                            <textarea name="description" id="description" class="form-control" required></textarea>
+                            <div id="description-error" class="text-danger error-display" role="alert"></div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="phone">Téléphone <span class="text-danger">*</span></label>
-                                    <input type="tel" maxlength="14" minlength="9" name="phone" id="phone"
-                                           class="form-control" required autocomplete="phone">
-                                    <div id="phone-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="fund_amount">Fond a verser <span class="text-danger"></span></label>
-                                    <input type="number" name="fund_amount" id="fund_amount" class="form-control"
-                                           autocomplete="fund_amount" step="any">
-                                    <div id="fund_amount-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group col-md-6 mb-3">
-                                    <label for="city">Ville<span class="text-danger">*</span></label>
-                                    <input type="text" name="city" id="city" class="form-control" required autocomplete="town">
-                                    <div id="city-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="address">Adresse <span class="text-danger">*</span></label>
-                                    <input type="text" name="address" id="address" class="form-control" required
-                                           autocomplete="address">
-                                    <div id="address-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
 
-                        </div>
 
                         <div class="my-3">
                             <div class="loading">En cours...</div>
@@ -257,24 +231,22 @@
                     }
                 },
                 ajax: {
-                    url: "{{ route('members.load') }}",
+                    url: "{{ route('fund.load') }}",
                 },
                 columns: [
                     {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
                     {data: 'DT_RowIndex', name: 'id', orderable: true, searchable: true},
-                    {data: 'name', name: 'name'},
-                    {data: 'email', name: 'email'},
-                    {data: 'phone', name: 'phone'},
-                    {data: 'country', name: 'country'},
-                    {data: 'city', name: 'towns.name',},
-                    {data: 'address', name: 'address'},
-                    // {data: 'user', name: 'users.email',},
+                    {data: 'member', name: 'members.first_name'},
+                    {data: 'amount', name: 'amount'},
+                    {data: 'description', name: 'description'},
+                    {data: 'created', name: 'funds.created_at'},
+                    {data: 'user', name: 'users.first_name',},
                     {data: 'actionbtn', name: 'actionbtn', orderable: false, searchable: false},
 
                 ],
                 order: ['1', 'desc']
             });
-            $('#infosTable_filter').addClass('col-md-6 float-right')
+            $('#infosTable_filter').addClass('col-md-4 float-right')
             $('#infosTable_info').addClass('col-md-6 float-left')
             $('#infosTable_paginate').addClass('col-md-6 float-right')
 
@@ -286,9 +258,9 @@
             let table = $('#infosTable').DataTable();
 
             swal.fire({
-                title: "Supprimer ce partenaire?",
+                title: "Supprimer ce fond?",
                 icon: 'question',
-                text: "Cette association serra supprimée, cette action est irreversible.",
+                text: "Ce fond serra supprimé, cette action est irreversible.",
                 type: "warning",
                 showCancelButton: !0,
                 confirmButtonText: "Oui, supprimer!",
@@ -303,7 +275,7 @@
                     });
                     $.ajax({
                         type: "DELETE",
-                        url: "{{ route('members.delete') }}",
+                        url: "{{ route('fund.delete') }}",
                         data: {id: id},
                         dataType: 'json',
                         success: function (res) {
@@ -362,7 +334,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('members.store') }}",
+                url: "{{ route('fund.store') }}",
                 data: data,
                 dataType: 'json',
                 success: function (response) {
@@ -374,7 +346,7 @@
                         $('#save-form')[0].reset();
                         Toast.fire({
                             icon: 'success',
-                            title: res.message
+                            title: response.message
                         });
                     } else {
                         $('#save-btn').attr("disabled", false);
@@ -421,7 +393,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('members.update') }}",
+                url: "{{ route('fund.update') }}",
                 data: data,
                 dataType: 'json',
                 success: function (response) {

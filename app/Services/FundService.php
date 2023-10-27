@@ -35,10 +35,10 @@ class FundService
      *
      * @param $id
      * @param $data
-     * @return Fund
+     * @return bool
      */
 
-    public function update($id,$data): Fund
+    public function update($id,$data): bool
     {
         return Fund::where('id',$id)->update($data);
     }

@@ -46,17 +46,17 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
+            <a href="{{ route('sessions.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Gestion des sessions</p>
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Ajouter une session</p>
-            </a>
-        </li>
+{{--        <li class="nav-item">--}}
+{{--            <a href="{{ route('') }}" class="nav-link">--}}
+{{--                <i class="far fa-circle nav-icon"></i>--}}
+{{--                <p>Ajouter une session</p>--}}
+{{--            </a>--}}
+{{--        </li>--}}
     </ul>
 </li>
 <li class="nav-item">
