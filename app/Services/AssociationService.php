@@ -52,11 +52,10 @@ class AssociationService
 
     public function show($id): Association|BelongsTo
     {
-        $data = Association::find($id);
-//        $data['user'] = Orders::find($id)->user;
+        //        $data['user'] = Orders::find($id)->user;
 //        $data['partner'] = Orders::find($id)->partner;
 //        $data['driver'] = Orders::find($id)->driver;
-        return $data;
+        return Association::find($id);
 //        return Orders::find($id)->with('user')->with('partner')->with('driver');
     }
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MeetingMemberSantion extends Model
+class MeetingMemberSanction extends Model
 {
     use HasFactory;
 
@@ -17,5 +17,6 @@ class MeetingMemberSantion extends Model
         'session_member_id',
         'meeting_id',
         'sanction_id',
+        'pay_status',
     ];
 }

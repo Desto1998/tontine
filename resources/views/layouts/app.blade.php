@@ -5,9 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ asset('images/logo/LOGO DIGITAL MOBILITY WHITE.PNG') }}">
-    <!-- APP Title -->2RFC
-    <title>{{ config('app.name', 'FREE') }} - @yield('title')</title>
+
+    <!-- APP Icons -->
+
+    <link rel="apple-touch-icon" sizes="57x57" href="{{asset('images/favicons/favicon-trans/apple-icon-57x57.png')}}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{asset('images/favicons/favicon-trans/apple-icon-60x60.png')}}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{asset('images/favicons/favicon-trans/apple-icon-72x72.png')}}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{asset('images/favicons/favicon-trans/apple-icon-76x76.png')}}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{asset('images/favicons/favicon-trans/apple-icon-114x114.png')}}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{asset('images/favicons/favicon-trans/apple-icon-120x120.png')}}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{asset('images/favicons/favicon-trans/apple-icon-144x144.png')}}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{asset('images/favicons/favicon-trans/apple-icon-152x152.png')}}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('images/favicons/favicon-trans/apple-icon-180x180.png')}}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{asset('images/favicons/favicon-trans/android-icon-192x192.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{asset('images/favicons/favicon-trans/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{asset('images/favicons/favicon-trans/favicon-96x96.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{asset('images/favicons/favicon-trans/favicon-16x16.png')}}">
+    <link rel="manifest" href="{{ asset('images/favicons/favicon-trans/manifest.json')}}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <!-- APP Title -->
+    <title>{{ config('app.name', 'TONTINE') }} - @yield('title')</title>
 
 @yield('css_before')
 
@@ -70,7 +89,7 @@
                             <a href="#" class="dropdown-item">
                                 <!-- Message Start -->
                                 <div class="media">
-                                    <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                                    <img src="" alt="User Avatar" class="img-size-50 mr-3 img-circle">
                                     <div class="media-body">
                                         <h3 class="dropdown-item-title">
                                             Brad Diesel
@@ -110,26 +129,26 @@
                     </li>
                     <li class="nav-item dropdown user-menu">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                            <img src="https://assets.infyom.com/logo/blue_logo_150x150.png"
+                            <img src="{{ !empty($user->profilePicturePath) ? asset('images/profil/' . $user->profilePicturePath) : asset('images/logo/logo-sans-fond.png') }}"
                                 class="user-image img-circle elevation-2" alt="User Image">
                             <span class="d-none d-md-inline">{{ Auth::user()->first_name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <!-- User image -->
                             <li class="user-header bg-primary">
-                                <img src="https://assets.infyom.com/logo/blue_logo_150x150.png"
+                                <img src="{{ !empty($user->profilePicturePath) ? asset('images/profil/' . $user->profilePicturePath) : asset('images/logo/logo-sans-fond.png') }}"
                                     class="img-circle elevation-2" alt="User Image">
                                 <p>
                                     {{ Auth::user()->name }}
-                                    <small>Member since {{ Auth::user()->created_at->format('M. Y') }}</small>
+                                    <small>Membre depuis {{ Auth::user()->created_at->format('M. Y') }}</small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <a href="{{ route('user.profile',Auth::id()) }}" class="btn btn-default btn-flat">Profile</a>
                                 <a href="#" class="btn btn-default btn-flat float-right"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Sign out
+                                    onclick="event.preventDefault(); if (confirm('Vous quitter?') ) document.getElementById('logout-form').submit();">
+                                    Deconnexion
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
@@ -153,7 +172,7 @@
                 <div class="float-right d-none d-sm-block">
                     <b>Version</b> 1.0.0
                 </div>
-                <strong>Copyright &copy; 2014-2023 <a href="https://destdevs.com">destdevs.com</a>.</strong> All rights
+                <strong>Copyright &copy; 2014-2023 <a href="https://destdevs.com">destdevs.com</a> .</strong> All rights
                 reserved.
             </footer>
         </div>

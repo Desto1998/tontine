@@ -38,14 +38,11 @@
         <!-- Main content -->
         <section class="content">
 
-            <!-- Default box -->
+            <!-- Default box for details form-->
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Information de la séance de réunion</h3>
-                    {{--                    <button type="button" class="btn btn-primary float-right" data-toggle="modal"--}}
-                    {{--                            data-target="#modal-default">--}}
-                    {{--                        Ajouter--}}
-                    {{--                    </button>--}}
+
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                         </button>
@@ -53,9 +50,13 @@
                 </div>
 
                 <div class="card-body">
+                    <a href="{{ route('meeting.print',['id'=>$meeting->id]) }}" class="btn btn-light float-right">
+                        <i class="fa fa-file-pdf"></i> Imprimer
+                    </a>
                     <form action="#" id="save-form" method="post">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        <input type="hidden" name="id" value="{{ $meeting->id }}">
                         <div class="form-group mb-3">
                             <label for="agenda">Ordre du jour<span class="text-danger">*</span></label>
                             <input type="text" name="agenda" id="agenda"
@@ -112,8 +113,8 @@
                         <div class="form-group mb-3">
                             <label for="comment">Commentaire<span class="text-danger">*</span></label>
                             <textarea name="comment" id="comment"
-                                   class="form-control" required value="{{ $meeting->comment }}"
-                                      autocomplete=""></textarea>
+                                   class="form-control"
+                                      autocomplete="">{{ $meeting->comment }}</textarea>
                             <div id="comment-error" class="text-danger error-display" role="alert"></div>
                         </div>
                         <div class="my-3">
@@ -128,21 +129,50 @@
                     </form>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
-
-                </div>
-                <!-- /.card-footer-->
             </div>
             <!-- /.card -->
+
+            <ul class="nav nav-pills mb-4">
+                <li class=" nav-item">
+                    <a href="#navpills-1" class="nav-link active" data-toggle="tab" aria-expanded="false">
+                        Cotisations</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#navpills-2" class="nav-link" data-toggle="tab" aria-expanded="false">
+                       Gérer Sanctions</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#navpills-3" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer les
+                        prets</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#navpills-4" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer
+                        Fonds</a>
+                </li>
+            </ul>
+            @include('layouts.partials._flash-message')
+            <div class="tab-content">
+                <div id="navpills-1" class="tab-pane active">
+                    @include('meeting.edit.contribution')
+                </div>
+                <div id="navpills-2" class="tab-pane">
+                    @include('meeting.edit.sanction')
+                </div>
+                <div id="navpills-3" class="tab-pane">
+                    @include('meeting.edit.loan')
+                </div>
+                <div id="navpills-4" class="tab-pane">
+                    @include('meeting.edit.fund')
+                </div>
+            </div>
 
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
 
-
-
-
+@include('meeting.edit.modals')
 
 @Endsection
 @section('script')
@@ -169,7 +199,66 @@
         // });
         // endregion
 
+        //region save data
+        function saveContribution($id){
+            $('#save-form .loading').fadeToggle();
+            $('#save-form .sent-message').hide();
+            $('#save-btn').attr("disabled", true);
+            $('#save-form .error-message').hide();
+            $('.error-display').text('');
+            // let table = $('#infosTable').DataTable();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            const data = $('#save-form').serialize();
 
+            $.ajax({
+                type: "POST",
+                url: "{{ route('meeting.update') }}",
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    if ($.isEmptyObject(response.error)) {
+                        $('#save-btn').attr("disabled", false);
+                        $('#save-form .loading').toggle();
+                        $('#save-form .sent-message').slideToggle();
+                        $('#save-form')[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+
+                        window.location.reload();
+                    } else {
+                        $('#save-btn').attr("disabled", false);
+                        $('#save-form .loading').toggle();
+                        let errBloc = '';
+                        $.each(response.error, function (key, value) {
+                            console.log(key);
+                            errBloc += '<span>' + value + '</span><br>';
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key + '-error').text(value);
+                            console.log('#' + key + '-error');
+                        });
+                        $('#save-form .error-message').show().html('').append(errBloc)
+                        errBloc = '';
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Vérifiez le formulaire et reéssayez'
+                        })
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#save-btn').attr("disabled", false)
+                    $('#save-form .loading').toggle();
+                }
+            });
+            $('.error-display').text('');
+        }
 
         // Save Modal Data
         $("#save-form").submit(function (event) {
@@ -189,7 +278,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('meeting.store') }}",
+                url: "{{ route('meeting.update') }}",
                 data: data,
                 dataType: 'json',
                 success: function (response) {
@@ -204,7 +293,7 @@
                             title: response.message
                         });
 
-                        window.location.href = '/dashboard/meeting/edit/'+response.data.id;
+                        window.location.reload();
                     } else {
                         $('#save-btn').attr("disabled", false);
                         $('#save-form .loading').toggle();
@@ -233,7 +322,342 @@
             $('.error-display').text('');
         });
 
+        // Save loan Modal Data
+        $("#save-form-loan").submit(function (event) {
+            event.preventDefault();
+            $('#save-form-loan .loading').fadeToggle();
+            $('#save-form-loan .sent-message').hide();
+            $('#save-btn-loan').attr("disabled", true);
+            $('#save-form-loan .error-message').hide();
+            $('.error-display').text('');
+            // let table = $('#infosTable').DataTable();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            const data = $('#save-form-loan').serialize();
 
+            $.ajax({
+                type: "POST",
+                url: "{{ route('loan.store') }}",
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    if ($.isEmptyObject(response.error)) {
+                        $('#save-btn-loan').attr("disabled", false);
+                        $('#save-form-loan .loading').toggle();
+                        $('#save-form-loan .sent-message').slideToggle();
+                        $('#save-form-loan')[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+                        window.location.reload();
+                    } else {
+                        $('#save-btn-loan').attr("disabled", false);
+                        $('#save-form-loan .loading').toggle();
+                        let errBloc = '';
+                        $.each(response.error, function (key, value) {
+                            console.log(key);
+                            errBloc += '<span>' + value + '</span><br>';
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key + '-error').text(value);
+                            console.log('#' + key + '-error');
+                        });
+                        $('#save-form-loan .error-message').show().html('').append(errBloc)
+                        errBloc = '';
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Vérifiez le formulaire et reéssayez'
+                        })
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#save-btn-loan').attr("disabled", false)
+                    $('#save-form-loan .loading').toggle();
+                }
+            });
+            $('.error-display').text('');
+        });
+
+        // Save fund Modal Data
+        $("#save-form-fund").submit(function (event) {
+            event.preventDefault();
+            $('#save-form-fund .loading').fadeToggle();
+            $('#save-form-fund .sent-message').hide();
+            $('#save-btn-fund').attr("disabled", true);
+            $('#save-form-fund .error-message').hide();
+            $('.error-display').text('');
+            // let table = $('#infosTable').DataTable();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            const data = $('#save-form-fund').serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('fund.store') }}",
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    if ($.isEmptyObject(response.error)) {
+                        $('#save-btn-fund').attr("disabled", false);
+                        $('#save-form-fund .loading').toggle();
+                        $('#save-form-fund .sent-message').slideToggle();
+                        $('#save-form-fund')[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+                        window.location.reload();
+                    } else {
+                        $('#save-btn-fund').attr("disabled", false);
+                        $('#save-form-fund .loading').toggle();
+                        let errBloc = '';
+                        $.each(response.error, function (key, value) {
+                            console.log(key);
+                            errBloc += '<span>' + value + '</span><br>';
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key + '-error').text(value);
+                            console.log('#' + key + '-error');
+                        });
+                        $('#save-form-fund .error-message').show().html('').append(errBloc)
+                        errBloc = '';
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Vérifiez le formulaire et reéssayez'
+                        })
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#save-btn-fund').attr("disabled", false)
+                    $('#save-form-fund .loading').toggle();
+                }
+            });
+            $('.error-display').text('');
+        });
+
+        // Save sanction Modal Data
+        $("#save-form-sanction").submit(function (event) {
+            event.preventDefault();
+            $('#save-form-sanction .loading').fadeToggle();
+            $('#save-form-sanction .sent-message').hide();
+            $('#save-btn-sanction').attr("disabled", true);
+            $('#save-form-sanction .error-message').hide();
+            $('.error-display').text('');
+            // let table = $('#infosTable').DataTable();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            const data = $('#save-form-sanction').serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('meeting.member.sanction.store') }}",
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    if ($.isEmptyObject(response.error)) {
+                        $('#save-btn-sanction').attr("disabled", false);
+                        $('#save-form-sanction .loading').toggle();
+                        $('#save-form-sanction .sent-message').slideToggle();
+                        $('#save-form-sanction')[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+                        window.location.reload();
+                    } else {
+                        $('#save-btn-sanction').attr("disabled", false);
+                        $('#save-btn-sanction .loading').toggle();
+                        let errBloc = '';
+                        $.each(response.error, function (key, value) {
+                            console.log(key);
+                            errBloc += '<span>' + value + '</span><br>';
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key + '-error').text(value);
+                            console.log('#' + key + '-error');
+                        });
+                        $('#save-form-sanction .error-message').show().html('').append(errBloc)
+                        errBloc = '';
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Vérifiez le formulaire et reéssayez'
+                        })
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#save-btn-sanction').attr("disabled", false);
+                    $('#save-form-sanction').attr("disabled", false)
+                    $('#save-form-sanction .loading').toggle();
+                }
+            });
+            $('.error-display').text('');
+        });
+    //endregion
+
+        //region delete methods
+        function deleteSanctionFun(id) {
+            // alert(id)
+
+            swal.fire({
+                title: "Supprimer ce sanction?",
+                icon: 'question',
+                text: "Cette sanction serra supprimée, cette action est irreversible.",
+                type: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Oui, supprimer!",
+                cancelButtonText: "Non, annuler !",
+                reverseButtons: !0
+            }).then(function (e) {
+                if (e.value === true) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('meeting.sanction.delete') }}",
+                        data: {id: id},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: res.message
+                                })
+                                window.location.reload();
+                            } else {
+                                sweetAlert("Désolé!", "Erreur lors de la suppression!", "error")
+                            }
+
+                        },
+                        error: function (resp) {
+                            sweetAlert("Désolé!", "Une erreur s'est produite.", "error");
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function (dismiss) {
+                console.log(dismiss)
+                return false;
+            })
+            // }
+        }
+
+        function deleteFundFun(id) {
+            // alert(id)
+
+            swal.fire({
+                title: "Supprimer ce fond?",
+                icon: 'question',
+                text: "Ce fond serra supprimé, cette action est irreversible.",
+                type: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Oui, supprimer!",
+                cancelButtonText: "Non, annuler !",
+                reverseButtons: !0
+            }).then(function (e) {
+                if (e.value === true) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('fund.delete') }}",
+                        data: {id: id},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: res.message
+                                })
+                                window.location.reload();
+                            } else {
+                                sweetAlert("Désolé!", "Erreur lors de la suppression!", "error")
+                            }
+
+                        },
+                        error: function (resp) {
+                            sweetAlert("Désolé!", "Une erreur s'est produite.", "error");
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function (dismiss) {
+                console.log(dismiss)
+                return false;
+            })
+            // }
+        }
+
+        function deleteLoanFun(id) {
+            // alert(id)
+
+            swal.fire({
+                title: "Supprimer ce prèt?",
+                icon: 'question',
+                text: "Ce prèt serra supprimé, cette action est irreversible.",
+                type: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Oui, supprimer!",
+                cancelButtonText: "Non, annuler !",
+                reverseButtons: !0
+            }).then(function (e) {
+                if (e.value === true) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('loan.delete') }}",
+                        data: {id: id},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: res.message
+                                })
+                                window.location.reload();
+                            } else {
+                                sweetAlert("Désolé!", "Erreur lors de la suppression!", "error")
+                            }
+
+                        },
+                        error: function (resp) {
+                            sweetAlert("Désolé!", "Une erreur s'est produite.", "error");
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function (dismiss) {
+                console.log(dismiss)
+                return false;
+            })
+            // }
+        }
+        //endregion
     </script>
     <!-- DataTables  & Plugins -->
     <script src="{{ asset('AdminLTE-3.2.0/plugins/datatables/jquery.dataTables.min.js')}}"></script>

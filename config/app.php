@@ -60,6 +60,7 @@ return [
     'asset_url' => env('ASSET_URL'),
     'deploy_date' => env('DEPLOY_DATE'),
     'deploy_year' => env('DEPLOY_YEAR',2023),
+    'licence_duration' => env('LICENCE_DURATION',90),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

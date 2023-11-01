@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->float('amount');
             $table->text('comment')->nullable();
+            $table->string('pay_status')->default('Non payé');
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('session_member_id');

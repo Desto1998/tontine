@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title','Associations')
+@section('title','Meeting-List')
 @section('css_before')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('AdminLTE-3.2.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -21,13 +21,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>GESTION DES MEMBRES</h1>
+                        <h1>GESTION DES SEANCES DE REUNION</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active"><a href="#">Associations</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Membre</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Meeting</a></li>
+                            <li class="breadcrumb-item active"><a href="#">List</a></li>
                         </ol>
                     </div>
                 </div>
@@ -52,12 +53,16 @@
                         <tr>
                             <th><input type="checkbox" id="check_" name="contact_form_message_id"></th>
                             <th>#</th>
-                            <th>Nom</th>
-                            <th>Prenom</th>
-                            <th>Telephone</th>
-                            <th>Ville</th>
-                            <th>Adresse</th>
-                            <th>Fond</th>
+                            <th>Date</th>
+                            <th>Coordonateur</th>
+                            <th>Ordre du jour</th>
+                            <th>Session</th>
+                            <th>Heure debut</th>
+                            <th>Heure fin</th>
+                            <th>M Fond</th>
+                            <th>M Pret</th>
+                            <th>M Sanc</th>
+                            <th>Par</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -79,90 +84,6 @@
     </div>
     <!-- /.content-wrapper -->
 
-
-
-    <!-- Add new modal -->
-    <div class="modal fade" id="modal-default">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Ajouter un partenaire</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="#" id="save-form" method="post">
-                        <div class="row">
-                            <div class="form-group col-md-6 mb-3"><div class="form-group col-md-6 mb-3">
-                                    <label for="first_name">Nom d'un membre<span class="text-danger">*</span></label>
-                                    <input type="text" name="first_name" id="first_name" class="form-control" required autocomplete="first_name">
-                                    <div id="first_name-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-
-                                <label for="last_name">Prenom du membre<span class="text-danger">*</span></label>
-                                <input type="text" name="last_name" id="last_name" class="form-control" required autocomplete="last_name">
-                                <div id="last_name-error" class="text-danger error-display" role="alert"></div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="phone">Téléphone <span class="text-danger">*</span></label>
-                                    <input type="tel" maxlength="14" minlength="9" name="phone" id="phone"
-                                           class="form-control" required autocomplete="phone">
-                                    <div id="phone-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="fund_amount">Fond a verser <span class="text-danger"></span></label>
-                                    <input type="number" name="fund_amount" id="fund_amount" class="form-control"
-                                           autocomplete="fund_amount" step="any">
-                                    <div id="fund_amount-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group col-md-6 mb-3">
-                                    <label for="city">Ville<span class="text-danger">*</span></label>
-                                    <input type="text" name="city" id="city" class="form-control" required autocomplete="town">
-                                    <div id="city-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="address">Adresse <span class="text-danger">*</span></label>
-                                    <input type="text" name="address" id="address" class="form-control" required
-                                           autocomplete="address">
-                                    <div id="address-error" class="text-danger error-display" role="alert"></div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="my-3">
-                            <div class="loading">En cours...</div>
-                            <div class="error-message"></div>
-                            <div class="sent-message">Enregistré avec succès</div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="save-btn">Enregistrer</button>
-                        </div>
-                    </form>
-
-                </div>
-
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <!-- end new modal -->
 
 @Endsection
 @section('script')
@@ -257,18 +178,33 @@
                     }
                 },
                 ajax: {
-                    url: "{{ route('members.load') }}",
+                    url: "{{ route('meeting.load') }}",
                 },
+            // <th>#</th>
+            // <th>Date</th>
+            // <th>Coordonateur</th>
+            // <th>Ordre du jour</th>
+            // <th>Session</th>
+            // <th>Heure debut</th>
+            // <th>Heure fin</th>
+            // <th>M Fond</th>
+            // <th>M Pret</th>
+            // <th>M Sanc</th>
+            // <th>Par</th>
+            // <th>Action</th>
                 columns: [
                     {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
                     {data: 'DT_RowIndex', name: 'id', orderable: true, searchable: true},
-                    {data: 'name', name: 'name'},
-                    {data: 'email', name: 'email'},
-                    {data: 'phone', name: 'phone'},
-                    {data: 'country', name: 'country'},
-                    {data: 'city', name: 'towns.name',},
-                    {data: 'address', name: 'address'},
-                    // {data: 'user', name: 'users.email',},
+                    {data: 'date', name: 'date'},
+                    {data: 'member', name: 'members.first_name'},
+                    {data: 'agenda', name: 'agenda'},
+                    {data: 'name', name: 'sessions.name'},
+                    {data: 'start_time', name: 'start_time',},
+                    {data: 'end_time', name: 'end_time'},
+                    {data: 'total_funds', name: 'total_funds'},
+                    {data: 'total_loans', name: 'total_loans'},
+                    {data: 'sanction_amount', name: 'sanction_amount'},
+                    {data: 'user', name: 'users.first_name',},
                     {data: 'actionbtn', name: 'actionbtn', orderable: false, searchable: false},
 
                 ],
@@ -286,9 +222,9 @@
             let table = $('#infosTable').DataTable();
 
             swal.fire({
-                title: "Supprimer ce partenaire?",
+                title: "Supprimer cette seance?",
                 icon: 'question',
-                text: "Cette association serra supprimée, cette action est irreversible.",
+                text: "Cette seance serra supprimée, cette action est irreversible.",
                 type: "warning",
                 showCancelButton: !0,
                 confirmButtonText: "Oui, supprimer!",
@@ -303,7 +239,7 @@
                     });
                     $.ajax({
                         type: "DELETE",
-                        url: "{{ route('members.delete') }}",
+                        url: "{{ route('meeting.delete') }}",
                         data: {id: id},
                         dataType: 'json',
                         success: function (res) {

@@ -37,6 +37,14 @@ class Meeting extends Model
     }
 
     /**
+     * Get the user that perform action.
+     */
+    public function coordinate(): BelongsTo
+    {
+        return $this->belongsTo(Member::class,'coordinator');
+    }
+
+    /**
      * Get the funds.
      */
     public function funds(): HasMany

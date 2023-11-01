@@ -20,8 +20,8 @@ class LicenceCheck
     {
         $deploy_date = config('app.deploy_date');
         $date = new DateTime($deploy_date);
-        $nbjour = 90;
-        $date->add(new DateInterval("P{$nbjour}D"));
+        $nb_jour = (int)config('app.licence_duration');
+        $date->add(new DateInterval("P{$nb_jour}D"));
         $date = date("Y-m-d", strtotime($date->format('Y-m-d')));
         if ($date<=date('Y-m-d')) {
             Auth::logout();

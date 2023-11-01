@@ -71,6 +71,7 @@ class FundController extends Controller
         $data['description'] = $request->input('description');
         $data['amount'] = $request->input('amount');
         $data['member_id'] = $request->input('member_id');
+        $data['meeting_id'] = $request->meeting_id;
 //        $data['association_id'] = \Auth::user()->association_id;
         $data['user_id'] = \Auth::user()->id;
 

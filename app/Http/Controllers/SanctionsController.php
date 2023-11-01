@@ -71,6 +71,7 @@ class SanctionsController extends Controller
         $data['description'] = $request->input('description');
         $data['association_id'] = \Auth::user()->association_id;
         $data['user_id'] = \Auth::id();
+        $data['meeting_id'] = $request->meeting_id;
 
         $member = $this->sanctionService->store($data);
         if ($member) {
@@ -79,7 +80,7 @@ class SanctionsController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Fond enregistrée avec succès.',
+            'message' => 'Sanction enregistrée avec succès.',
             'data' => $member,
         ]);
 

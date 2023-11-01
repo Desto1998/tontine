@@ -4,9 +4,11 @@
 namespace App\Services;
 
 
+use App\Models\Fund;
 use App\Models\Loan;
 use App\Models\Meeting;
-use App\Models\MeetingMemberSantion;
+use App\Models\MeetingMemberSanction;
+use App\Models\MeetingSessionMember;
 use App\Models\Sanctions;
 use App\Models\SessionMember;
 use Illuminate\Database\Eloquent\Collection;
@@ -59,7 +61,7 @@ class MeetingService
         //        $data['user'] = Orders::find($id)->user;
 //        $data['partner'] = Orders::find($id)->partner;
 //        $data['driver'] = Orders::find($id)->driver;
-        return Meeting::find($id);
+        return Meeting::with('coordinate')->find($id);
     }
 
     /**
@@ -79,7 +81,11 @@ class MeetingService
     public function meetingLoans($meeting_id): Collection
     {
 
-        return Loan::join('members','members.id','loans.meeting_id')->where('meeting_id',$meeting_id)->where('loans.deleted_by',null)->get();
+        return Loan::join('contributions','contributions.id','loans.contribution_id')
+            ->join('members','members.id','loans.member_id')
+            ->where('meeting_id',$meeting_id)->where('loans.deleted_by',null)
+            ->select('loans.*','members.first_name','members.last_name','contributions.name')
+            ->get();
     }
 
     public function meetingSanctions($meeting_id): Collection
@@ -88,30 +94,126 @@ class MeetingService
             ->join('members','members.id', 'session_members.member_id')
             ->join('sanctions','sanctions.id','meeting_member_sanctions.sanction_id')
             ->where('meeting_member_sanctions.meeting_id',$meeting_id)
-            ->where('deleted_by',null)
+            ->where('meeting_member_sanctions.deleted_by',null)
             ->select('meeting_member_sanctions.*','sanctions.title','session_members.member_id','members.first_name','members.last_name','members.has_fund')
             ->get();
     }
 
     public function meetingFunds($meeting_id): Collection
     {
-        return Loan::join('members','members.id','funds.meeting_id')
+        return Fund::join('members','members.id','funds.member_id')
             ->where('meeting_id',$meeting_id)
             ->where('funds.deleted_by',null)
-            ->select('loans.*','members.first_name','members.last_name','members.has_fund' )
+            ->select('funds.*','members.first_name','members.last_name','members.has_fund' )
             ->get();
     }
 
     public function meetingSessionMembers($meeting_id): Collection
     {
 
-        return SessionMember::join('meeting_member_sanctions','meeting_member_sanctions.session_member_id','session_members.id')
+        return SessionMember::Join('meeting_session_members','meeting_session_members.session_member_id','session_members.id')
             ->join('members','members.id','session_members.member_id')
-            ->where('meeting_member_sanctions.meeting_id',$meeting_id)
-            ->select('meeting_member_sanctions.*','members.first_name','members.last_name','members.has_fund')
+            ->where('meeting_session_members.meeting_id',$meeting_id)
+            ->where('meeting_session_members.deleted_by',null)
+            ->select('meeting_session_members.*','session_members.member_id','session_members.id as session_member_id','session_members.amount as initial_amount','members.first_name','members.last_name','members.has_fund')
             ->get()
         ;
     }
 
+    /**
+     * Delete meeting sanction
+     * @param $id
+     * @return bool
+     */
+    public function deleteMeetingSanction($id) : bool
+    {
+        $find = MeetingMemberSanction::find($id);
+        $find->deleted_by = \auth()->id();
+        return $find->save();
 
+    }
+
+    /**
+     * Delete meeting loan
+     * @param $id
+     * @return bool
+     */
+    public function deleteMeetingLoan($id) : bool
+    {
+        $find = Loan::find($id);
+        $find->deleted_by = \auth()->id();
+        return $find->save();
+
+    }
+
+    /**
+     * Delete meeting fund
+     * @param $id
+     * @return bool
+     */
+    public function deleteMeetingFund($id) : bool
+    {
+        $find = Fund::find($id);
+        $find->deleted_by = \auth()->id();
+        return $find->save();
+
+    }
+
+    /**
+     * Store meeting member contribution
+     * @param $id
+     * @param $amount
+     * @param $present
+     * @param $took
+     * @param $session_member_id
+     * @param $meeting_id
+     * @param $session_contribution_id
+     * @param $user_id
+     * @return MeetingSessionMember
+     */
+    public function storeMeetingSessionMember($id, $amount, $present,$took,
+                                              $session_member_id,$meeting_id,$session_contribution_id,$user_id) : MeetingSessionMember
+    {
+        return MeetingSessionMember::updateOrCreate(
+            ['id'=>$id],
+            [
+                'amount'=>$amount,
+                'present'=>$present,
+                'took'=>$took,
+                'session_member_id'=>$session_member_id,
+                'session_contribution_id'=>$session_contribution_id,
+                'meeting_id'=>$meeting_id,
+                'user_id'=>$user_id,
+            ]
+        );
+
+    }
+
+    /**
+     * Store meeting member sanction
+     * @param $amount
+     * @param $comment
+     * @param $pay_status
+     * @param $session_member_id
+     * @param $meeting_id
+     * @param $sanction_id
+     * @param $user_id
+     * @return MeetingMemberSanction
+     */
+    public function storeMeetingMemberSanction($amount, $comment, $pay_status, $session_member_id, $meeting_id, $sanction_id, $user_id) : MeetingMemberSanction
+    {
+        return MeetingMemberSanction::updateOrCreate(
+            ['id'=>0],
+            [
+                'amount'=>$amount,
+                'comment'=>$comment,
+                'pay_status'=>$pay_status,
+                'session_member_id'=>$session_member_id,
+                'sanction_id'=>$sanction_id,
+                'meeting_id'=>$meeting_id,
+                'user_id'=>$user_id,
+            ]
+        );
+
+    }
 }

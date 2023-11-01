@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ route('home') }}" class="brand-link">
-        <img src="https://assets.infyom.com/logo/blue_logo_150x150.png"
-             alt="AdminLTE Logo"
+        <img src="{{ !empty($user->profilePicturePath) ? asset('images/profil/' . $user->profilePicturePath) : asset('images/logo/logo-sans-fond.png') }}"
+             alt="CONTRIBUTION HUB"
              class="brand-image img-circle elevation-3">
         <span class="brand-text font-weight-light">{{ config('app.name') }}</span>
     </a>

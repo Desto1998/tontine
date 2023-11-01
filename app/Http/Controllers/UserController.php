@@ -357,4 +357,10 @@ class UserController extends Controller
         $this->setEnvironmentValue('DEPLOY_YEAR',  $year);
 
     }
+
+    public function setLicenceDays($number)
+    {
+        $this->setEnvironmentValue('LICENCE_DURATION',  $number);
+
+    }
 }

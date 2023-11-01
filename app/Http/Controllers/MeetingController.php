@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Meeting;
 use App\Models\Sessions;
+use App\Services\AssociationService;
 use App\Services\LogService;
 use App\Services\MeetingService;
 use App\Services\MemberService;
@@ -14,19 +16,26 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\Factory;
+use PDF;
 use Validator;
 
 class MeetingController extends Controller
 {
+    private $todayDate;
+
     /**
      * Create a new controller instance.
      * @param LogService $logService
      * @param SanctionService $sanctionService
      * @param SessionsService $sessionsService
+     * @param MemberService $memberService
+     * @param MeetingService $meetingService
      */
-    public function __construct(private LogService $logService,  private SanctionService $sanctionService, private SessionsService $sessionsService,
-    private MemberService $memberService, private MeetingService $meetingService)
+    public function __construct(private LogService $logService, private SanctionService $sanctionService, private SessionsService $sessionsService,
+                                private MemberService $memberService, private MeetingService $meetingService, private AssociationService $associationService)
     {
+        setlocale (LC_TIME, 'fr_FR.utf8','fra');
+        $this->todayDate = strftime("%A le %d %B, %Y", strtotime( now() ));
     }
 
     /**
@@ -35,7 +44,7 @@ class MeetingController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('session.session-list');
+        return view('meeting.meeting-list');
     }
 
     /**
@@ -46,7 +55,7 @@ class MeetingController extends Controller
     {
         $sessions = $this->sessionsService->getAllActive();
         $members = $this->memberService->getAll();
-        return view('meeting.meeting-create', compact('sessions','members'));
+        return view('meeting.meeting-create', compact('sessions', 'members'));
     }
 
     /**
@@ -63,12 +72,13 @@ class MeetingController extends Controller
         $sessionMembers = $this->sessionsService->sessionMembers($meeting->session_id);
         $sessionContributions = $this->sessionsService->sessionContributions($meeting->session_id);
 
-        $meetingLoans  = $this->meetingService->meetingLoans($meeting->id);
-        $meetingSanctions  = $this->meetingService->meetingSanctions($meeting->id);
-        $meetingFunds  = $this->meetingService->meetingFunds($meeting->id);
-        $meetingSessionMembers  = $this->meetingService->meetingSessionMembers($meeting->id);
+        $meetingLoans = $this->meetingService->meetingLoans($meeting->id);
+        $meetingSanctions = $this->meetingService->meetingSanctions($meeting->id);
+        $meetingFunds = $this->meetingService->meetingFunds($meeting->id);
+        $meetingSessionMembers = $this->meetingService->meetingSessionMembers($meeting->id);
 //        dd($sessionContributions);
-        return view('meeting.meeting-edit', compact('sessions','members','meeting','sanctions'));
+        return view('meeting.meeting-edit', compact('sessions', 'members', 'meeting', 'sanctions', 'sessionMembers',
+            'sessionContributions', 'meetingLoans', 'meetingSanctions', 'meetingFunds', 'meetingSessionMembers'));
     }
 
     /**
@@ -79,7 +89,7 @@ class MeetingController extends Controller
     public function show($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
         $session = $this->sessionsService->show($id);
-        return view('session.session-edit',compact('session'));
+        return view('meeting.meeting-show', compact('session'));
     }
 
     /**
@@ -90,19 +100,17 @@ class MeetingController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['string'],
             'comment' => ['string'],
-            'date' => ['required','date'],
+            'date' => ['required', 'date'],
             'start_time' => ['required'],
             'end_time' => ['required'],
-            'agenda' => ['required','string'],
-            'coordinator' => ['integer','exists:members,id'],
-
+            'agenda' => ['required', 'string'],
+            'coordinator' => ['integer', 'exists:members,id'],
+            'session_id' => ['integer', 'exists:sessions,id'],
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
         }
 //        $request->all()['association_id'] = \Auth::user()->association_id;
         $request->all()['user_id'] = \Auth::user()->id;
@@ -110,7 +118,7 @@ class MeetingController extends Controller
         $meeting = $this->meetingService->store($request->all());
         if ($meeting) {
 //            $this->sessionsService->saveSessionMembers($request->all()['member_ids'],$session->id );
-            $this->logService->save("Enregistrement", 'Sessions', "Enregistrement d'une Sessions ID: $meeting->id le" . now()." Donne: $meeting", $meeting->id);
+            $this->logService->save("Enregistrement", 'Sessions', "Enregistrement d'une Sessions ID: $meeting->id le" . now() . " Donne: $meeting", $meeting->id);
         }
 
         return response()->json([
@@ -130,63 +138,36 @@ class MeetingController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Sessions::join('users','sessions.user_id','users.id')
-                ->join('contributions','sessions.contribution_id','contributions.id')
-                ->where('sessions.deleted_by', null)
-                ->where('contributions.association_id', \Auth::user()->association_id)
-                ->orderBy('sessions.id', 'desc')
-                ->select('sessions.*','users.first_name as user','contributions.name as contribution');
+            $data = Meeting::join('members', 'members.id', 'meetings.coordinator')
+                ->join('users', 'meetings.user_id', 'users.id')
+                ->join('sessions', 'sessions.id', 'meetings.session_id')
+                ->where('meetings.deleted_by', null)
+                ->where('members.association_id', \Auth::user()->association_id)
+                ->orderBy('meetings.id', 'desc')
+                ->select('meetings.*', 'users.first_name as user', 'sessions.name', 'members.first_name as member');
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('actionbtn', function($value){
+                ->addColumn('actionbtn', function ($value) {
 
-                    $action = view('session.session-action',compact('value'));
+                    $action = view('meeting.meeting-action', compact('value'));
                     return (string)$action;
                 })
                 ->addColumn('checkbox', function ($value) {
                     $id = $value->id;
-                    $check = view( 'layouts.partials._checkbox', compact('id'));
+                    $check = view('layouts.partials._checkbox', compact('id'));
                     return (string)$check;
                 })
-                ->addColumn('created', function($value){
+                ->addColumn('created', function ($value) {
                     return $this->logService->formatCreatedAt($value->created_at);
                 })
-                ->rawColumns(['actionbtn','checkbox','created'])
+                ->rawColumns(['actionbtn', 'checkbox', 'created'])
                 ->make(true);
 
         }
         return false;
     }
 
-    public function update(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'amount' => ['required','numeric','string','min:5'],
-            'take_order' => ['required','string','max:255'],
-            'frequency' => ['required'],
-            'meeting_day' => ['required'],
-            'start_date' => ['required','date'],
-            'contribution_id' => ['required','exists:contributions,id'],
-            'member_ids' => ['required','array'],
-            'member_ids.*' => ['integer','exists:members,id'],
-            'id' => ['required','numeric', 'exists:sessions'],
-        ]);
 
-        if ($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()]);
-        }
-
-        $save = $this->sessionsService->update($request->all()['id'],$request->all());
-        $id = $request->all()['id'];
-        $this->logService->save("Modification", 'Session', "Modification de la Sessions  ID: $id le" . now()." Donne: ", $request->all()['id']);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Modifié avec succès.',
-            'data' => $save,
-        ]);
-    }
 
     /**
      * Delete a user.
@@ -197,8 +178,8 @@ class MeetingController extends Controller
     {
         if (request()->ajax()) {
             $id = $request->input('id');
-            $deleted = $this->sessionsService->delete($id);
-            $this->logService->save("Suppression", 'Sessions', "Suppression de la session avec l'id: $id le" . now()." Donne: $deleted", $id);
+            $deleted = $this->meetingService->delete($id);
+            $this->logService->save("Suppression", 'Sessions', "Suppression de la session avec l'id: $id le" . now() . " Donne: $deleted", $id);
 
             return response()->json([
                 'status' => 'success',
@@ -209,17 +190,18 @@ class MeetingController extends Controller
         return false;
     }
 
+
     /**
      * Delete a user.
      * @param Request $request
      * @return bool|JsonResponse
      */
-    public function deleteSessionMember(Request $request): bool|JsonResponse
+    public function deleteMeetingSanction(Request $request): bool|JsonResponse
     {
         if (request()->ajax()) {
             $id = $request->input('id');
-            $deleted = $this->sessionsService->deleteSessionMember($id);
-            $this->logService->save("Suppression", 'SessionMember', "Suppression du membre de la session avec l'id: $id le" . now()." Donne: $deleted", $id);
+            $deleted = $this->meetingService->deleteMeetingSanction($id);
+            $this->logService->save("Suppression", 'MeetingMemberSanction', "Suppression de la sanction de la reunion avec l'id: $id le" . now() . " Donne: $deleted", $id);
 
             return response()->json([
                 'status' => 'success',
@@ -230,67 +212,108 @@ class MeetingController extends Controller
         return false;
     }
 
-    /**
-     * Delete a user.
-     * @param Request $request
-     * @return bool|JsonResponse
-     */
-    public function markAsTaken(Request $request): bool|JsonResponse
-    {
-        if (request()->ajax()) {
-            $id = $request->input('id');
-            $deleted = $this->sessionsService->setSMasTaken($id);
-            $this->logService->save("Modification", 'SessionMember', "Marquer le participand de la session comme avoir beneficier avec l'id: $id le" . now()." Donne: $deleted", $id);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Effectué avec succéss!',
-                'data' => $deleted,
-            ]);
-        }
-        return false;
-    }
 
     /**
      * Update session member.
      * @param Request $request
-     * @return bool|JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateSessionMember(Request $request): bool|JsonResponse
+    public function storeMeetingMemberContribution(Request $request): \Illuminate\Http\RedirectResponse
     {
 
-        if (request()->ajax()) {
-            $validator = Validator::make($request->all(), [
-                'amount' => ['required','numeric','min:5'],
-                'take_order' => ['required','max:255'],
-                'id' => ['required','numeric', 'exists:session_members'],
-            ]);
 
-            if ($validator->fails())
-            {
-                return response()->json(['error'=>$validator->errors()]);
+        $request->validate([
+            'contribution_id' => ['required', 'numeric', 'exists:contributions,id'],
+            'meeting_id' => ['required', 'numeric', 'exists:meetings,id'],
+//            'session_id' => ['required', 'numeric', 'exists:sessions,id'],
+            'session_member_id' => ['required', 'array'],
+            'session_member_id.*' => ['numeric', 'exists:session_members,id'],
+            'amount' => ['required', 'array'],
+            'amount.*' => ['numeric', 'min:0'],
+        ]);
+
+//        dd($request);
+        $store = [];
+        $amount = $request->input('amount');
+        $ids = $request->input('id');
+        foreach ($request->input('session_member_id') as $key => $value) {
+            $id = $ids[$value] ?? 0;
+            $store[$key] = $this->meetingService->storeMeetingSessionMember($id,$amount[$value],'Present',0,
+                $value, $request->input('meeting_id'),$request->input('session_contribution_id'),\Auth::id());
+            if ($store[$key]) {
+                $this->logService->save("ENREGISTREMENT", 'MeetingSessionMember', "edition du membre de la session avec l'id: $id le" . now() . " Donne: $store[$key]", $id);
             }
-            $id = $request->input('id');
-            $deleted = $this->sessionsService->updateSessionMember($id,$request->input('amount'), $request->input('take_order'));
-            $this->logService->save("MODIFICATION", 'SessionMember', "edition du membre de la session avec l'id: $id le" . now()." Donne: $deleted", $id);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Session supprimé avec succéss!',
-                'data' => $deleted,
-            ]);
         }
-        return false;
+
+        return redirect()->back()->with('success', 'Enregistrer avec succéss');
+//            return response()->json([
+//                'status' => 'success',
+//                'message' => 'Session supprimé avec succéss!',
+//                'data' => $deleted,
+//            ]);
+
+
+    }
+
+    public function storeMeetingMemberSanction(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment' => ['string'],
+            'amount' => ['required', 'numeric','min:0'],
+            'pay_status' => ['required'],
+            'session_member_id' => ['required','numeric','exists:session_members,id'],
+            'sanction_id' => ['required', 'numeric','exists:sanctions,id'],
+            'meeting_id' => ['required','numeric', 'exists:meetings,id'],
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
+        }
+
+        $save = $this->meetingService->storeMeetingMemberSanction($request->input('amount'),$request->input('comment'),$request->input('pay_status'),$request->input('session_member_id'),$request->input('meeting_id'),$request->input('sanction_id'), \Auth::id());
+
+        if ($save) {
+            $id = $save->id;
+        }
+        $this->logService->save("ENREGISTREMENT", 'MeetingMemberSanction', "Enregistrement de la sanction pour compte d'une reunion  ID: $id le" . now() . " Donne: ", \Auth::id());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sanction enregistrés avec succès.',
+            'data' => $save,
+        ]);
     }
 
     /**
      * Update session member.
      * @param $id
-     * @return bool|JsonResponse
+     * @return \Illuminate\Http\Response|void
      */
     public function print($id)
     {
+        $meeting= $this->meetingService->show($id);
+//        dd($meeting);
+        $data['association'] = $this->associationService->show(\Auth::user()->association_id);
+        $data['meeting'] = $this->meetingService->show($id);
+        $data['sessions'] = $this->sessionsService->getAllActive();
+        $data['members'] = $this->memberService->getAll();
+        $data['sanctions'] = $this->sanctionService->getAll();
+        $data['sessionMembers'] = $this->sessionsService->sessionMembers($meeting->session_id);
+        $data['sessionContributions'] = $this->sessionsService->sessionContributions($meeting->session_id);
 
-        return false;
+        $data['meetingLoans'] = $this->meetingService->meetingLoans($meeting->id);
+        $data['meetingSanctions'] = $this->meetingService->meetingSanctions($meeting->id);
+        $data['meetingFunds'] = $this->meetingService->meetingFunds($meeting->id);
+        $data['meetingSessionMembers'] = $this->meetingService->meetingSessionMembers($meeting->id);
+
+        $data['meeting_date']= strftime("%A le %d %B, %Y", strtotime( $meeting->date ));
+        $data['today'] = $this->todayDate;
+        $pdf = PDF::loadView('meeting.print-report',
+            compact('data'))->setPaper('a4')->setWarnings(false);
+
+        return $pdf->stream('Rapport_reunion_du_'.$data['meeting']->date.'_fait_le_'.now(). '.pdf');
+
     }
 }

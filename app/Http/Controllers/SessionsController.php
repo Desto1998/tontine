@@ -173,8 +173,10 @@ class SessionsController extends Controller
         $data['start_date'] = $request->input('start_date');
         $save = $this->sessionsService->update($request->all()['id'],$data);
         if ($save) {
-            $this->sessionsService->saveSessionMembers($request->all()['member_ids'],$save->id );
-            $this->sessionsService->saveSessionContribution($request->all()['contribution_ids'],$save->id );
+            if ($this->sessionsService->canEditSessionContribution($request->input('id'))) {
+                $this->sessionsService->saveSessionMembers($request->all()['member_ids'],$request->input('id') );
+                $this->sessionsService->saveSessionContribution($request->all()['contribution_ids'],$save->id );
+            }
             $id = $request->all()['id'];
             $this->logService->save("Modification", 'Session', "Modification de la Sessions  ID: $id le" . now()." Donne: ", $request->all()['id']);
 

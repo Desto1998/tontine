@@ -115,8 +115,6 @@
                             <div id="description-error" class="text-danger error-display" role="alert"></div>
                         </div>
 
-
-
                         <div class="my-3">
                             <div class="loading">En cours...</div>
                             <div class="error-message"></div>
@@ -150,7 +148,6 @@
             $('.select2bs4').select2({
                 theme: 'bootstrap4'
             })
-            load()
         });
 
         // fonction qui charge les informations : les elements du tableau
@@ -437,10 +434,10 @@
             });
             $('.error-display').text('');
         }
-
         $('.modal button[data-dismiss="modal"]').click(function (e) {
             load();
         });
+
     </script>
     <!-- DataTables  & Plugins -->
     <script src="{{ asset('AdminLTE-3.2.0/plugins/datatables/jquery.dataTables.min.js')}}"></script>

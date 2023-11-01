@@ -66,8 +66,8 @@ class LoanService
     public function delete($id) : bool
     {
         $find = Loan::find($id);
-        $find->deleted_at = date('Y-m-d H:i:s');
-//        $driver->deleted_by = \auth()->id();
+//        $find->deleted_at = date('Y-m-d H:i:s');
+        $find->deleted_by = \auth()->id();
         return $find->save();
 
     }
