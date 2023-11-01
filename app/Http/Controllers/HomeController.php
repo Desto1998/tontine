@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\DashboardService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -11,7 +12,7 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(private DashboardService $dashboardService)
     {
         $this->middleware('auth');
     }
@@ -23,6 +24,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $data['member'] = $this->dashboardService->countMember();
+        $data['contribution'] = $this->dashboardService->countContribution();
+        $data['sanction'] = $this->dashboardService->countSanction();
+        $data['association'] = $this->dashboardService->countAssociation();
+        $data['loan'] = $this->dashboardService->countLoan();
+        $data['fund'] = $this->dashboardService->countFund();
+        $data['meeting'] = $this->dashboardService->countMeeting();
+        $data['session'] = $this->dashboardService->countSession();
+        return view('home', compact('data'));
     }
 }

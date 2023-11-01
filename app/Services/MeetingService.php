@@ -216,4 +216,59 @@ class MeetingService
         );
 
     }
+
+    /**
+     * set meeting winners
+     * @param $meeting_id
+     * @param $session_member_id
+     * @param $session_contribution_id
+     * @param $amount
+     * @return bool
+     */
+    public function setMeetingWinner($meeting_id,$session_member_id, $session_contribution_id, $amount):bool
+    {
+//
+        $session_member = SessionMember::where('id',$session_member_id)->update([
+            'taken' => 1,
+        ] );
+
+        return MeetingSessionMember::where('session_contribution_id', $session_contribution_id)
+            ->where('meeting_id',$meeting_id)
+            ->where('session_member_id',$session_member_id)
+            ->update([
+                'took'=>1,
+                'take_amount'=>$amount,
+            ]);
+
+    }
+    public function meetingWinnerMembers($meeting_id): Collection
+    {
+
+        return SessionMember::Join('meeting_session_members','meeting_session_members.session_member_id','session_members.id')
+            ->join('members','members.id','session_members.member_id')
+            ->where('meeting_session_members.meeting_id',$meeting_id)
+            ->where('meeting_session_members.deleted_by',null)
+            ->where('meeting_session_members.took',1)
+            ->where('meeting_session_members.take_amount','!=',0)
+            ->select('meeting_session_members.*','session_members.member_id','session_members.id as session_member_id','session_members.amount as initial_amount','members.first_name','members.last_name','members.has_fund')
+            ->get()
+            ;
+    }
+
+    /**
+     * set meeting winners
+     * @param $meeting_session_member_id
+     * @return bool
+     */
+    public function deleteMeetingWinner($meeting_session_member_id):bool
+    {
+//
+        return MeetingSessionMember::where('id', $meeting_session_member_id)
+            ->update([
+                'took'=>0,
+                'take_amount'=>0,
+            ]);
+
+    }
+
 }

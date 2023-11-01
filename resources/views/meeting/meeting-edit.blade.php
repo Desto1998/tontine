@@ -150,6 +150,12 @@
                     <a href="#navpills-4" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer
                         Fonds</a>
                 </li>
+                @if (count($meetingSessionMembers))
+                    <li class="nav-item">
+                        <a href="#navpills-5" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer
+                            Gagnant/Bouffeurs</a>
+                    </li>
+                @endif
             </ul>
             @include('layouts.partials._flash-message')
             <div class="tab-content">
@@ -165,6 +171,12 @@
                 <div id="navpills-4" class="tab-pane">
                     @include('meeting.edit.fund')
                 </div>
+                @if (count($meetingSessionMembers))
+                    <div id="navpills-5" class="tab-pane">
+                        @include('meeting.edit.winner')
+                    </div>
+                @endif
+
             </div>
 
         </section>
@@ -505,6 +517,68 @@
             });
             $('.error-display').text('');
         });
+
+        // Save sanction Modal Data
+        $("#save-form-winner").submit(function (event) {
+            event.preventDefault();
+            $('#save-form-winner .loading').fadeToggle();
+            $('#save-form-winner .sent-message').hide();
+            $('#save-btn-winner').attr("disabled", true);
+            $('#save-form-winner .error-message').hide();
+            $('.error-display').text('');
+            // let table = $('#infosTable').DataTable();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            const data = $('#save-form-winner').serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('meeting.member.winner.store') }}",
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    if ($.isEmptyObject(response.error)) {
+                        $('#save-btn-winner').attr("disabled", false);
+                        $('#save-form-winner .loading').toggle();
+                        $('#save-form-winner .sent-message').slideToggle();
+                        $('#save-form-winner')[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+                        window.location.reload();
+                    } else {
+                        $('#save-btn-winner').attr("disabled", false);
+                        $('#save-btn-winner .loading').toggle();
+                        let errBloc = '';
+                        $.each(response.error, function (key, value) {
+                            console.log(key);
+                            errBloc += '<span>' + value + '</span><br>';
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key + '-error').text(value);
+                            console.log('#' + key + '-error');
+                        });
+                        $('#save-form-winner .error-message').show().html('').append(errBloc)
+                        errBloc = '';
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Vérifiez le formulaire et reéssayez'
+                        })
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#save-btn-winner').attr("disabled", false);
+                    $('#save-form-winner').attr("disabled", false)
+                    $('#save-form-winner .loading').toggle();
+                }
+            });
+            $('.error-display').text('');
+        });
     //endregion
 
         //region delete methods
@@ -612,6 +686,56 @@
             // alert(id)
 
             swal.fire({
+                title: "Supprimer ce gagnant?",
+                icon: 'question',
+                text: "Ce gagnant serra supprimé, cette action est irreversible.",
+                type: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Oui, supprimer!",
+                cancelButtonText: "Non, annuler !",
+                reverseButtons: !0
+            }).then(function (e) {
+                if (e.value === true) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('meeting.member.winner.delete') }}",
+                        data: {id: id},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: res.message
+                                })
+                                window.location.reload();
+                            } else {
+                                sweetAlert("Désolé!", "Erreur lors de la suppression!", "error")
+                            }
+
+                        },
+                        error: function (resp) {
+                            sweetAlert("Désolé!", "Une erreur s'est produite.", "error");
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function (dismiss) {
+                console.log(dismiss)
+                return false;
+            })
+            // }
+        }
+
+        function deleteWinnerFun(id) {
+            // alert(id)
+
+            swal.fire({
                 title: "Supprimer ce prèt?",
                 icon: 'question',
                 text: "Ce prèt serra supprimé, cette action est irreversible.",
@@ -629,7 +753,7 @@
                     });
                     $.ajax({
                         type: "DELETE",
-                        url: "{{ route('loan.delete') }}",
+                        url: "{{ route('meeting.member.winner.delete') }}",
                         data: {id: id},
                         dataType: 'json',
                         success: function (res) {

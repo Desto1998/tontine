@@ -18,5 +18,6 @@ class MeetingSessionMember extends Model
         'meeting_id',
         'present',
         'took',
+        'take_amount',
     ];
 }

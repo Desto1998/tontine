@@ -113,9 +113,11 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::post('meeting/update', 'update')->name('meeting.update');
                 Route::delete('meeting/destroy', 'destroy')->name('meeting.delete');
                 Route::delete('meeting/sanction/destroy', 'deleteMeetingSanction')->name('meeting.sanction.delete');
+                Route::delete('meeting/member/winner/destroy', 'deleteMeetingMemberWinner')->name('meeting.member.winner.delete');
 
                 Route::post('meeting/member/session/store', 'storeMeetingMemberContribution')->name('meeting.member.session.store');
                 Route::post('meeting/member/sanction/store', 'storeMeetingMemberSanction')->name('meeting.member.sanction.store');
+                Route::post('meeting/member/winner/store', 'storeMeetingMemberWinner')->name('meeting.member.winner.store');
 
                 Route::delete('meeting/member/destroy', 'deleteSessionMember')->name('meeting-member-delete');
                 Route::post('meeting/member/taken', 'markAsTaken')->name('meeting.member.taken');

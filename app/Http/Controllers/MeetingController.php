@@ -74,11 +74,12 @@ class MeetingController extends Controller
 
         $meetingLoans = $this->meetingService->meetingLoans($meeting->id);
         $meetingSanctions = $this->meetingService->meetingSanctions($meeting->id);
+        $meetingWinners = $this->meetingService->meetingWinnerMembers($meeting->id);
         $meetingFunds = $this->meetingService->meetingFunds($meeting->id);
         $meetingSessionMembers = $this->meetingService->meetingSessionMembers($meeting->id);
 //        dd($sessionContributions);
         return view('meeting.meeting-edit', compact('sessions', 'members', 'meeting', 'sanctions', 'sessionMembers',
-            'sessionContributions', 'meetingLoans', 'meetingSanctions', 'meetingFunds', 'meetingSessionMembers'));
+            'sessionContributions', 'meetingLoans', 'meetingSanctions', 'meetingFunds', 'meetingSessionMembers','meetingWinners'));
     }
 
     /**
@@ -212,6 +213,28 @@ class MeetingController extends Controller
         return false;
     }
 
+    /**
+     * Delete meeting Winner.
+     * @param Request $request
+     * @return bool|JsonResponse
+     */
+
+    public function deleteMeetingMemberWinner(Request $request): bool|JsonResponse
+    {
+        if (request()->ajax()) {
+            $id = $request->input('id');
+            $deleted = $this->meetingService->deleteMeetingWinner($id);
+            $this->logService->save("Suppression", 'MeetingSessionMember', "Suppression de la sanction de la reunion avec l'id: $id le" . now() . " Donne: $deleted", \Auth::id());
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Gagnant supprimé avec succéss!',
+                'data' => $deleted,
+            ]);
+        }
+        return false;
+    }
+
 
     /**
      * Update session member.
@@ -220,7 +243,6 @@ class MeetingController extends Controller
      */
     public function storeMeetingMemberContribution(Request $request): \Illuminate\Http\RedirectResponse
     {
-
 
         $request->validate([
             'contribution_id' => ['required', 'numeric', 'exists:contributions,id'],
@@ -286,6 +308,33 @@ class MeetingController extends Controller
         ]);
     }
 
+    public function storeMeetingMemberWinner(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'amount' => ['required', 'numeric','min:0'],
+            'session_contribution_id' => ['required','numeric','exists:session_contributions,id'],
+            'session_member_id' => ['required','numeric','exists:session_members,id'],
+            'meeting_id' => ['required','numeric', 'exists:meetings,id'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
+        }
+
+        $save = $this->meetingService->setMeetingWinner($request->input('meeting_id'),$request->input('session_member_id'),$request->input('session_contribution_id'),$request->input('amount'));
+
+        if ($save) {
+            $this->logService->save("ENREGISTREMENT", 'MeetingMemberSanction', "Enregistrement de la sanction pour compte d'une reunion  ID:  le" . now() . " Donne: ", \Auth::id());
+
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Gagnant enregistrés avec succès.',
+            'data' => $save,
+        ]);
+    }
+
     /**
      * Update session member.
      * @param $id
@@ -307,7 +356,7 @@ class MeetingController extends Controller
         $data['meetingSanctions'] = $this->meetingService->meetingSanctions($meeting->id);
         $data['meetingFunds'] = $this->meetingService->meetingFunds($meeting->id);
         $data['meetingSessionMembers'] = $this->meetingService->meetingSessionMembers($meeting->id);
-
+        $data['meetingWinners'] = $this->meetingService->meetingWinnerMembers($meeting->id);
         $data['meeting_date']= strftime("%A le %d %B, %Y", strtotime( $meeting->date ));
         $data['today'] = $this->todayDate;
         $pdf = PDF::loadView('meeting.print-report',

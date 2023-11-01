@@ -251,3 +251,65 @@
 </div>
 <!-- /.modal -->
 <!-- end new modal -->
+
+<!-- Add new winnner modal -->
+<div class="modal fade" id="modal-winner">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Ajouter un gagnant de la séance</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="#" id="save-form-winner" method="post">
+                    <input type="hidden" name="meeting_id" value="{{ $meeting->id }}">
+                    <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+
+                    <div class="form-group mb-3">
+                        <label for="amount">Montant<span class="text-danger">*</span></label>
+                        <input type="number" min="0" name="amount" id="amount"
+                               class="form-control" required>
+                        <div id="amount-error" class="text-danger error-display" role="alert"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="session_member_id">Membres <span class="text-danger">*</span></label>
+                        <select name="session_member_id" id="session_member_id" required class="select2 form-control">
+                            <option></option>
+                            @foreach($sessionMembers as $sm)
+                                <option value="{{ $sm->id }}">{{ $sm->member->first_name }} {{ $sm->member->last_name }}</option>
+                            @endforeach
+                        </select>
+                        <div id="session_member_id-error" class="text-danger error-display" role="alert"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="session_contribution_id">Cotisation source <span class="text-danger">*</span></label>
+                        <select name="session_contribution_id" id="session_contribution_id" class="select2 form-control">
+                            <option></option>
+                            @foreach($sessionContributions as $c)
+                                <option value="{{ $c->id }}">{{ $c->contribution->name }}</option>
+                            @endforeach
+                        </select>
+                        <div id="session_contribution_id-error" class="text-danger error-display" role="alert"></div>
+                    </div>
+                    <div class="my-3">
+                        <div class="loading">En cours...</div>
+                        <div class="error-message"></div>
+                        <div class="sent-message">Enregistré avec succès</div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="save-btn-winner">Enregistrer</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- end new modal -->

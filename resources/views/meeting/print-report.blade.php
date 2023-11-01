@@ -32,7 +32,9 @@
         width: 100px;
         height: 80px;
     }
-
+    tfoot{
+        background-color: #eee;
+    }
     header table .for-name {
         text-align: center;
         /*width: 300px;*/
@@ -72,7 +74,9 @@
         width: 100%;
         margin-top: 20px;
     }
-
+    .for-data{
+        font-size: 12px;
+    }
     .for-garentie tr td div {
         font-size: 12px;
         line-height: 1.6;
@@ -350,6 +354,9 @@
     </tr>
     </thead>
     <tbody>
+    @php
+        $totalC =0  ;
+    @endphp
     @foreach($data['meetingFunds'] as $key=>$ms)
         <tr>
             <td>{{ $key+1 }}</td>
@@ -366,9 +373,52 @@
         <td><strong>{{ $totalC }}</strong></td>
     </tr>
     </tfoot>
-
 </table>
-
+<h3 class="section-heading">Bénéficiaires/Gagnant</h3>
+<div class="for-data">
+    <table class="table for-data bordered-table">
+        <caption>Liste des bénéficiaires</caption>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Cotisation</th>
+            <th>Membre</th>
+            <th>Montant</th>
+        </tr>
+        </thead>
+        <tbody>
+        @php
+            $totalC =0  ;
+        @endphp
+        @foreach($data['meetingWinners'] as $key=>$ms)
+            @php
+                $contribution_name= '';
+                $totalC += $ms->take_amount  ;
+            @endphp
+            @foreach($data['sessionContributions'] as $sc)
+                @if ($sc->id == $ms->session_contribution_id)
+                    @php
+                        $contribution_name = $sc->contribution->name;
+                    @endphp
+                @endif
+            @endforeach
+            <tr>
+                <td>{{ $key+1 }}</td>
+                <td>{{ $contribution_name }}</td>
+                <td>{{ $ms->first_name }} {{ $ms->last_name }}</td>
+                <td>{{ $ms->take_amount }}</td>
+            </tr>
+        @endforeach
+        </tbody>
+        <tfoot>
+        <tr>
+            <th colspan="2" rowspan="1"></th>
+            <td>Total </td>
+            <td><strong>{{ $totalC }}</strong></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
 <br>
 {{--<div class="space-for-footer"></div>--}}
 <footer class="for-footer footer">
