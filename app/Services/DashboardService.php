@@ -17,21 +17,21 @@ class DashboardService
 {
     public function countMember():int
     {
-        return Member::where('deleted_at',null)->count();
+        return Member::where('deleted_at',null)->where('association_id',\Auth::user()->association_id)->count();
     }
 
     public function countContribution():int
     {
-        return Contribution::where('deleted_by',null)->count();
+        return Contribution::where('deleted_by',null)->where('association_id',\Auth::user()->association_id)->count();
     }
     public function countFund():int
     {
-        return Fund::where('deleted_by',null)->count();
+        return Fund::join('members','members.id','funds.member_id')->where('funds.deleted_by',null)->where('association_id',\Auth::user()->association_id)->count();
     }
 
     public function countLoan():int
     {
-        return Loan::where('deleted_by',null)->count();
+        return Loan::join('members','members.id','loans.member_id')->where('loans.deleted_by',null)->where('association_id',\Auth::user()->association_id)->count();
     }
 
     public function countMemberNoFund():int
@@ -40,7 +40,7 @@ class DashboardService
     }
     public function countSanction():int
     {
-        return Sanctions::where('deleted_by',null)->count();
+        return Sanctions::where('deleted_by',null)->where('association_id',\Auth::user()->association_id)->count();
     }
     public function countAssociation():int
     {
@@ -49,11 +49,11 @@ class DashboardService
 
     public function countSession():int
     {
-        return Sessions::where('deleted_by',null)->count();
+        return Sessions::join('users','sessions.user_id','users.id')->where('deleted_by',null)->where('association_id',\Auth::user()->association_id)->count();
     }
 
     public function countMeeting():int
     {
-        return Meeting::where('deleted_by',null)->count();
+        return Meeting::join('users','meetings.user_id','users.id')->where('meetings.deleted_by',null)->where('association_id',\Auth::user()->association_id)->count();
     }
 }

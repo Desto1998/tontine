@@ -85,7 +85,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Ajouter un partenaire</h4>
+                    <h4 class="modal-title">Ajouter une association</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -112,7 +112,6 @@
                                 <div id="town-error" class="text-danger error-display" role="alert"></div>
                             </div>
                         </div>
-
 
                         <div class="row">
                             <div class="form-group col-md-6 mb-3">
