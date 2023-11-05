@@ -233,7 +233,7 @@
             </thead>
             <tbody>
             @foreach($data['meetingSessionMembers'] as $key=> $msm)
-                @if ($msm->session_contribution_id==$contribution->id)
+                @if ($msm->session_contribution_id==$contribution->id && !$msm->deleted_by)
                     @php
                         $totalC += $msm->amount;
                     @endphp
