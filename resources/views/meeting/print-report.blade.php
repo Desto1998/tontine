@@ -155,7 +155,7 @@
                 {{--                @endphp--}}
 
 {{--                                    <img src="{{url('/')}}{{ asset('images/logo/logo-sans-fond.png') }}" class="logo" alt="Logo not found">--}}
-                <img src="{{ !empty($data['association']->logo) ? asset('images/profil/' . $data['association']->logo) : asset('images/logo/logo-sans-fond.png') }}" class="logo" alt="Logo not found">
+                <img src="{{url('/')}}{{ !empty($data['association']->logo) ? asset('images/profil/' . $data['association']->logo) : asset('images/logo/logo-sans-fond.png') }}" class="logo" alt="Logo not found">
             </td>
             <td class="for-name">
                 <h3>{{ $data['association']->name }}</h3>
