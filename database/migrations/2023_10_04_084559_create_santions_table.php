@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sanctions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->float('amount');
+            $table->float('amount')->default(0);
             $table->text('description');
             $table->unsignedBigInteger('association_id')->nullable();
             $table->unsignedBigInteger('user_id');

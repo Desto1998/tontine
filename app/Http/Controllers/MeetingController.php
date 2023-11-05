@@ -168,7 +168,34 @@ class MeetingController extends Controller
         return false;
     }
 
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment' => ['string'],
+            'date' => ['required','date'],
+            'start_time' => ['required'],
+            'end_time' => ['required'],
+            'agenda' => ['required','string'],
+            'coordinator' => ['integer','exists:members,id'],
+            'id' => ['integer','exists:meetings,id','required'],
+            'session_id' => ['integer','exists:sessions,id'],
+        ]);
 
+        if ($validator->fails())
+        {
+            return response()->json(['error'=>$validator->errors()]);
+        }
+
+        $save = $this->meetingService->update($request->all()['id'],$request->except('_token'));
+        $id = $request->all()['id'];
+        $this->logService->save("Modification", 'Meeting', "Modification de la reunion  ID: $id le" . now()." Donne: ", $request->all()['id']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Modifié avec succès.',
+            'data' => $save,
+        ]);
+    }
 
     /**
      * Delete a user.
