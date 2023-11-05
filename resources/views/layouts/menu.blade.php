@@ -37,7 +37,7 @@
     </ul>
 </li>
 <li class="nav-item">
-    <a href="{{ route('admin.associations.index') }}" class="nav-link">
+    <a href="#" class="nav-link">
         <i class="nav-icon fa fa-plus-square"></i>
         <p>
             Sessions
