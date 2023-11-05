@@ -21,14 +21,14 @@ class LogService
      * @return Log
      */
 
-    public function save($action, $model,$description,$id, $user_id=""): Log
+    public function save($action, $model,$description,$id, $user_id=0): Log
     {
         return Log::create([
             'action' => $action,
             'model' => $model,
             'description' => $description,
             'model_id' => $id,
-            'user_id' => $user_id ?? Auth::user()->id,
+            'user_id' => $user_id != 0 ? $user_id : Auth::user()->id,
         ]);
     }
 
