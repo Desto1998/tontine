@@ -41,10 +41,10 @@ class MeetingService
      *
      * @param $id
      * @param $data
-     * @return Meeting
+     * @return int
      */
 
-    public function update($id,$data): Meeting
+    public function update($id,$data): int
     {
         return Meeting::where('id',$id)->update($data);
     }
