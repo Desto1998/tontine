@@ -36,9 +36,21 @@ class AssociationService
      *
      * @param $id
      * @param $data
-     * @return Association
+     * @return int
      */
-    public function update($id,$data): Association
+    public function update($id,$data): int
+    {
+        return Association::where('id',$id)->update($data);
+    }
+
+    /**
+     * Update an association logo
+     *
+     * @param $id
+     * @param $data
+     * @return int
+     */
+    public function updateImage($id,$data): int
     {
         return Association::where('id',$id)->update($data);
     }
@@ -47,7 +59,7 @@ class AssociationService
      * Get a partner
      *
      * @param $id
-     * @return BelongsTo
+     * @return Association|BelongsTo
      */
 
     public function show($id): Association|BelongsTo

@@ -198,35 +198,49 @@ class AssociationController extends Controller
      */
     public function editForm(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('association.association-list');
+        $association = $this->associationService->show(\Auth::user()->association_id);
+        return view('association.my_association',compact('association'));
     }
 
     public function updateMy(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['string','min:5','max:255'],
+        $request->validate([
+            'name' => ['string','min:5','max:255','required'],
             'phone' => ['required', 'string', 'min:9','max:14'],
-            'email' => ['required', 'email'],
-            'country' => ['required'],
-            'town' => ['required'],
+            'email' => ['required', 'email','max:255'],
+            'country' => ['required','max:50'],
+            'town' => ['required','max:50'],
             'description' => ['required'],
-            'fist_name' => ['required'],
-            'last_name' => ['required','string', 'min:5','max:255'],
             'id' => ['required','int','exists:associations'],
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()]);
-        }
-        $save = $this->associationService->update($request->all()['id'],$request->all());
+        $this->associationService->update($request->all()['id'],$request->except('_token'));
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Association', "Modification des informations l'association ID: $id le" . now()." Donne: ", $request->all()['id']);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Modifié avec succès.',
-            'data' => $save,
+       return redirect()->back()->with('success','Informations mise à jour avec succès.');
+    }
+
+    public function updateLogo(Request $request)
+    {
+        $file = $request->file('logo');
+
+        $request->validate([
+            'logo.*' => 'mimes:jpeg,png,jpg,gif,svg',
+            'id' => ['required','numeric','exists:associations']
         ]);
+        $destinationPath = 'images/profil';
+        $originalFile = $file->getClientOriginalName();
+        $file->move($destinationPath, $originalFile);
+        $id = $request->id;
+
+        $user = $this->associationService->updateImage($id, ['logo'=>$originalFile]);
+        $this->logService->save("Modification", 'Association', "Modification de l'image de profil, utilisateur avec ID: $id le" . now()." Donne: $originalFile", $id);
+
+        if ($user) {
+            return redirect()->back()->with('success','Enregistré avec succès!');
+        }else{
+            return redirect()->back()->with('danger',"Désolé une erreur s'est produit! Veillez reéssayer.");
+        }
     }
 }

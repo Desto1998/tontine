@@ -130,6 +130,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
 
             Route::get('association/detail', [App\Http\Controllers\AssociationController::class, 'editForm'])->name('association.detail');
             Route::post('association/my/update', [App\Http\Controllers\AssociationController::class, 'updateMy'])->name('association.my.update');
+            Route::post('association/my/update/logo', [App\Http\Controllers\AssociationController::class, 'updateLogo'])->name('association.my.update.logo');
 
         });
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
