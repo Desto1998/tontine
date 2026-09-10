@@ -1,71 +1,145 @@
 @extends('layouts.guest')
 
-    @section('content')
-        <div class="login-box">
-            <div class="login-logo">
-                <a href="{{ url('/home') }}"><b>{{ config('app.name') }}</b></a>
-            </div>
-            <!-- /.login-logo -->
+@section('content')
 
-            <!-- /.login-box-body -->
-            <div class="card">
-                <div class="card-body login-card-body">
-                    <p class="login-box-msg">Connectez-vous</p>
-                    @include('layouts.partials._flash-message')
-                    <form method="post" action="{{ url('/login') }}">
-                        @csrf
+<div class="register-wrapper">
 
-                        <div class="input-group mb-3">
-                            <input type="email" name="email" value="{{ old('email') }}" placeholder="Email"
-                                   class="form-control @error('email') is-invalid @enderror">
-                            <div class="input-group-append">
-                                <div class="input-group-text"><span class="fas fa-envelope"></span></div>
-                            </div>
-                            @error('email')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
+<!--
+<div class="register-header">
+    <img src="{{ asset('images/logo/logo-web.png') }}" alt="GSC" class="logo-web">
+
+    <p>Connectez-vous pour accéder à votre espace de gestion.</p>
+</div>
+-->
+
+<div class="register-card">
+
+    <div class="register-card-header">
+        <h2>Se connecter</h2>
+        <p>Entrez vos identifiants pour accéder à votre compte.</p>
+    </div>
+
+    <div class="register-card-body">
+
+        @include('layouts.partials._flash-message')
+
+        <form method="POST" action="{{ url('/login') }}">
+            @csrf
+
+            {{-- EMAIL --}}
+            <div class="form-group">
+                <label>
+                    Email <span class="required">*</span>
+                </label>
+
+                <div class="input-group">
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        class="form-control @error('email') is-invalid @enderror"
+                        placeholder="exemple@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="fas fa-envelope"></i>
                         </div>
-
-                        <div class="input-group mb-3">
-                            <input type="password" name="password" placeholder="Password"
-                                   class="form-control @error('password') is-invalid @enderror">
-                            <div class="input-group-append">
-                                <div class="input-group-text">
-                                    <span class="fas fa-lock"></span>
-                                </div>
-                            </div>
-                            @error('password')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="icheck-primary">
-                                    <input type="checkbox" id="remember">
-                                    <label for="remember">Se souvenir de moi</label>
-                                </div>
-                            </div>
-
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-primary btn-block">Login</button>
-                            </div>
-
-                        </div>
-                    </form>
-
-                    <p class="mb-1">
-                        <a href="{{ route('password.request') }}">Mot de passe oublié?</a>
-                    </p>
-                    <p class="mb-0">
-                        <a href="{{ route('register') }}" class="text-center">Céer un compte</a>
-                    </p>
+                    </div>
                 </div>
-                <!-- /.login-card-body -->
+
+                @error('email')
+                    <span class="text-danger small">{{ $message }}</span>
+                @enderror
             </div>
 
-        </div>
-        <!-- /.login-box -->
-    @endsection
 
+            {{-- MOT DE PASSE --}}
+            <div class="form-group">
+                <label>
+                    Mot de passe <span class="required">*</span>
+                </label>
+
+                <div class="input-group">
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control @error('password') is-invalid @enderror"
+                        placeholder="Votre mot de passe"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                @error('password')
+                    <span class="text-danger small">{{ $message }}</span>
+                @enderror
+            </div>
+
+
+            {{-- OPTIONS --}}
+            <div class="d-flex justify-content-between align-items-center mt-3">
+
+                <div class="terms">
+                    <div class="icheck-primary">
+                        <input
+                            type="checkbox"
+                            id="remember"
+                            name="remember"
+                        >
+
+                        <label for="remember">
+                            Se souvenir de moi
+                        </label>
+                    </div>
+                </div>
+
+                <a href="{{ route('password.request') }}">
+                    Mot de passe oublié ?
+                </a>
+
+            </div>
+
+
+            {{-- ACTION --}}
+            <div class="row align-items-center mt-4">
+
+                <div class="col-md-7">
+                    <small class="text-muted">
+                        <span class="required">*</span>
+                        Champs obligatoires
+                    </small>
+                </div>
+
+                <div class="col-md-5 text-md-right">
+                    <button type="submit" class="btn btn-primary btn-register">
+                        Se connecter
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <div class="login-link">
+            Vous n'avez pas encore de compte ?
+            <a href="{{ route('register') }}">
+                Créer l'association
+            </a>
+        </div>
+
+    </div>
+</div>
+
+</div>
+
+@endsection

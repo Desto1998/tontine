@@ -39,17 +39,17 @@
     <link rel="stylesheet" href="{{ asset('AdminLTE-3.2.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('AdminLTE-3.2.0/dist/css/adminlte.min.css')}}">
+    <!-- Custom style -->
+    <link rel="stylesheet" href="{{ asset('style.css')}}">
+
     <!-- Scripts -->
     {{--    @vite(['resources/sass/app.scss', 'resources/js/app.js'])--}}
 </head>
 <body class="hold-transition login-page">
 <div id="app">
-    <div class="login-box">
-        <main class="py-4">
-            @yield('content')
-        </main>
-    </div>
-
+    <main class="py-4">
+        @yield('content')
+    </main>
 </div>
 <!-- jQuery -->
 <script src="{{ asset('AdminLTE-3.2.0/plugins/jquery/jquery.min.js') }}"></script>

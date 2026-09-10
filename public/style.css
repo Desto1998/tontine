@@ -14,10 +14,12 @@
     padding: 15px;
     font-weight: 600;
 }
-.dm-text-danger{
+
+.dm-text-danger {
     color: #ed3c0d;
     font-weight: 500;
 }
+
 .error-message br+br {
     margin-top: 25px;
 }
@@ -50,3 +52,268 @@
     animation: animate-loading 1s linear infinite;
 }
 
+
+/* =========================================================
+   PERSONNALISATION DE L'INTERFACE
+   ========================================================= */
+
+/* Fond général */
+body {
+    background-color: #f4f6f9;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   PAGE D'INSCRIPTION / CONNEXION
+   ========================================================= */
+
+.register-wrapper {
+    width: 100%;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 8px;
+}
+
+.register-header p {
+    color: #6c757d;
+    margin: 0;
+    font-size: 15px;
+}
+
+
+/* Carte */
+.register-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+/* En-tête de la carte */
+.register-card-header {
+    background: #007bff;
+    color: #fff;
+    padding: 18px 25px;
+}
+
+.register-card-header h2 {
+    margin: 0 0 3px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.register-card-header p {
+    margin: 0;
+    opacity: .9;
+    font-size: 13px;
+}
+
+
+/* Corps de la carte */
+.register-card-body {
+    padding: 20px 25px;
+}
+
+
+/* Titres des sections */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0 20px;
+    color: #343a40;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.section-title i {
+    color: #007bff;
+}
+
+
+/* Champs */
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px !important;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 4px;
+}
+
+.input-group {
+    margin-bottom: 0 !important;
+}
+
+.input-group .form-control,
+.form-control {
+    height: 40px !important;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    box-shadow: none;
+    font-size: 14px !important;
+}
+
+.input-group .form-control {
+    border-radius: 8px 0 0 8px;
+}
+
+.input-group-append .input-group-text {
+    border: 1px solid #dfe3e8;
+    border-left: 0;
+    background: #f8f9fa;
+    color: #6c757d;
+    border-radius: 0 8px 8px 0;
+    width: 48px;
+    justify-content: center;
+    height: 40px;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, .08);
+}
+
+textarea.form-control {
+    height: 100px;
+    resize: vertical;
+    padding-top: 12px;
+}
+
+
+/* Séparation */
+.section-divider {
+    border: 0;
+    border-top: 1px solid #edf0f2;
+    margin: 20px 0;
+}
+
+
+/* Conditions */
+.terms {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 5px;
+}
+
+
+/* Bouton */
+.btn-register {
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0 20px;
+    background: #007bff;
+    transition: .2s;
+}
+
+.btn-register:hover {
+    background: #0069d9;
+    transform: translateY(-1px);
+}
+
+
+/* Lien connexion */
+.login-link {
+    text-align: center;
+    padding: 10px 0 0;
+    font-size: 13px !important;
+    color: #6c757d;
+}
+
+.login-link a {
+    color: #007bff;
+    font-weight: 600;
+    font-size: 13px !important;
+}
+
+.required {
+    color: #dc3545;
+}
+
+
+/* Logo */
+.logo-tontine-reduit-sans-fond.png {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .register-wrapper {
+        margin: 15px auto;
+        padding: 0 15px;
+    }
+
+    .register-card-body {
+        padding: 15px 20px;
+    }
+
+    .register-card-header {
+        padding: 15px 20px;
+    }
+
+    .register-header h1 {
+        font-size: 25px;
+    }
+
+    .btn-register {
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 12px;
+        padding: 0 20px;
+        background: #007bff;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: .2s;
+    }
+
+    .btn-register:hover {
+        background: #0069d9;
+        transform: translateY(-1px);
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+}
