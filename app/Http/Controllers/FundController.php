@@ -6,13 +6,13 @@ use App\Models\Fund;
 use App\Services\FundService;
 use App\Services\LogService;
 use App\Services\MemberService;
-use DataTables;
+use Yajra\DataTables\DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\Factory;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class FundController extends Controller
 {

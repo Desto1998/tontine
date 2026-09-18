@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Meeting extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'comment',
@@ -27,6 +28,15 @@ class Meeting extends Model
         'total_loans',
         'total_amount',
     ];
+
+    protected $casts = [
+        'deleted_at' => 'datetime',
+    ];
+
+    public function deletedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by')->withDefault();
+    }
 
     /**
      * Get the user that perform action.

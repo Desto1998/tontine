@@ -19,7 +19,7 @@ return new class extends Migration
             $table->float('interest');
             $table->string('interest_type'); // type d'interet pourcentage ou autre
             $table->float('total_amount');
-            $table->boolean('status')->default(false);
+            $table->string('status')->default(false);
             $table->date('return_date')->nullable();
             $table->date('real_return_date')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
@@ -29,6 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('meeting_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -39,6 +40,9 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('create_id')->references('id')->on('creates')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('members')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('meeting_id')->references('id')->on('meetings')

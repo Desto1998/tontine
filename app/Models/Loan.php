@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Loan extends Model
 {
@@ -26,4 +27,9 @@ class Loan extends Model
         'member_id',
         'meeting_id',
     ];
+
+    public function loan(): hasMany
+    {
+        return $this->hasMany(Refund::class)->withDefault();
+    }
 }

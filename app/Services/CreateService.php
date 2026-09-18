@@ -16,7 +16,7 @@ class CreateService
      */
     public function getAll() : Collection
     {
-        return Create::where('deleted_by')->orderBy('id')->get();
+        return Create::orderBy('id')->get();
     }
 
     /**

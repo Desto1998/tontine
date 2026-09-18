@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('type');
+            $table->date('fund_deadline')->nullable();
+            $table->float('loan_deadline')->nullable();
+            $table->date('interest')->nullable();
             $table->boolean('status')->default(true);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('association_id');
@@ -30,6 +33,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

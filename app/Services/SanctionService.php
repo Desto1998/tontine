@@ -16,7 +16,7 @@ class SanctionService
      */
     public function getAll() : Collection
     {
-        return Sanctions::where('deleted_by')->where('association_id', \Auth::user()->association_id)->orderBy('id')->get();
+        return Sanctions::where('association_id', \Auth::user()->association_id)->orderBy('id')->get();
     }
 
     /**

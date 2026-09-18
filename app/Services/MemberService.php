@@ -17,7 +17,7 @@ class MemberService
      */
     public function getAll() : Collection
     {
-        return Member::where('deleted_at')->where('association_id', \Auth::user()->association_id)->orderBy('id')->get();
+        return Member::where('association_id', \Auth::user()->association_id)->orderBy('id')->get();
     }
 
     /**

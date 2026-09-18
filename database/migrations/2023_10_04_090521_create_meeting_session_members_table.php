@@ -17,12 +17,14 @@ return new class extends Migration
             $table->float('take_amount')->nullable()->default(0);
             $table->string('present');
             $table->boolean('took')->default(false);
+            $table->unsignedBigInteger('avarist')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('session_contribution_id');
             $table->unsignedBigInteger('session_member_id');
             $table->unsignedBigInteger('meeting_id');
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

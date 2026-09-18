@@ -16,7 +16,7 @@ class LoanService
      */
     public function getAll() : Collection
     {
-        return Loan::where('deleted_by')->orderBy('id')->get();
+        return Loan::orderBy('id')->get();
     }
 
     /**

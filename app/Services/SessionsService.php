@@ -20,7 +20,7 @@ class SessionsService
      */
     public function getAll(): Collection
     {
-        return Sessions::where('deleted_by')->orderBy('id')->get();
+        return Sessions::orderBy('id')->get();
     }
 
     /**

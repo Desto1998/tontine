@@ -16,7 +16,7 @@ class FundService
      */
     public function getAll() : Collection
     {
-        return Fund::where('deleted_by')->orderBy('id')->get();
+        return Fund::orderBy('id')->get();
     }
 
     /**

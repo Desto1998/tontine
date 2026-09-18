@@ -20,10 +20,16 @@ return new class extends Migration
             $table->string('city', 80);
             $table->boolean('has_fund')->default(true);
             $table->float('fund_amount')->default(0);
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('association_id');
-            $table->dateTime('deleted_at')->nullable();
             $table->timestamps();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
             $table->foreign('association_id')->references('id')->on('associations')
+                ->onUpdate('cascade')
+                ->onDelete('cascade')
+            ;
+            $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade')
             ;

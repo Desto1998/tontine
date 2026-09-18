@@ -21,8 +21,12 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('description')->nullable();
             $table->string('address')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
             $table->timestamps();
-            $table->dateTime('deleted_at')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

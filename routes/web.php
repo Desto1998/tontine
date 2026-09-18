@@ -13,6 +13,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsActive;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\LicenceCheck;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*

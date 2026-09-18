@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -24,7 +25,7 @@ class User extends Authenticatable
         'is_active',
         'is_admin',
         'profilePicturePath',
-        'deleted_at',
+        'deleted_by',
         'last_seen',
         'last_ip',
         'email',
@@ -32,6 +33,11 @@ class User extends Authenticatable
         'association_id',
         'member_id',
     ];
+
+    public function deletedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by')->withDefault();
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -51,5 +57,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'deleted_at' => 'datetime',
     ];
 }

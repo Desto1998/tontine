@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('meeting_id');
             $table->unsignedBigInteger('sanction_id');
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

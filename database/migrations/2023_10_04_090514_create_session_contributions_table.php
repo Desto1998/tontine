@@ -16,6 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('session_id');
             $table->unsignedBigInteger('contribution_id');
             $table->timestamps();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+            $table->foreign('deleted_by')->references('id')->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->foreign('session_id')->references('id')->on('sessions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

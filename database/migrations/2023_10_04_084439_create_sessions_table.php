@@ -33,6 +33,8 @@ return new class extends Migration
 //                ->onUpdate('cascade')
 //                ->onDelete('cascade');
             $table->timestamps();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
         });
     }
 

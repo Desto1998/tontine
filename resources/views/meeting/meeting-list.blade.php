@@ -42,10 +42,9 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Liste des associations</h3>
-                    <button type="button" class="btn btn-primary float-right" data-toggle="modal"
-                            data-target="#modal-default">
+                    <a href="{{ route('meeting.create') }}" class="btn btn-primary float-right">
                         Ajouter
-                    </button>
+                    </a>
                 </div>
                 <div class="card-body">
                     <table id="infosTable" class="table table-bordered table-striped text-center">

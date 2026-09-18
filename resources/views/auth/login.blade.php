@@ -4,13 +4,13 @@
 
 <div class="register-wrapper">
 
-<!--
+
 <div class="register-header">
-    <img src="{{ asset('images/logo/logo-web.png') }}" alt="GSC" class="logo-web">
+    <img src="{{ asset('images/logo/logo-sans-fond.png') }}" alt="GSC" class="logo-web w-50">
 
     <p>Connectez-vous pour accéder à votre espace de gestion.</p>
 </div>
--->
+
 
 <div class="register-card">
 

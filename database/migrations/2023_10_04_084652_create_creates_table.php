@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->float('amount');
             $table->timestamps();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
         });
     }
 

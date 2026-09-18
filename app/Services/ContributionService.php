@@ -16,7 +16,7 @@ class ContributionService
      */
     public function getAll() : Collection
     {
-        return Contribution::where('deleted_by')->where('association_id',\Auth::user()->association_id)->orderBy('id')->get();
+        return Contribution::where('association_id',\Auth::user()->association_id)->orderBy('id')->get();
     }
 
     /**

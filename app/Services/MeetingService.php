@@ -22,7 +22,7 @@ class MeetingService
      */
     public function getAll() : Collection
     {
-        return Meeting::where('deleted_by')->orderBy('id')->get();
+        return Meeting::orderBy('id')->get();
     }
 
     /**

@@ -20,6 +20,7 @@ return new class extends Migration
 //            $table->unsignedBigInteger('association_id');
             $table->unsignedBigInteger('meeting_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->foreign('deleted_by')->references('id')->on('users')
                 ->onUpdate('cascade')

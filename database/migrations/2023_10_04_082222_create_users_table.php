@@ -23,7 +23,6 @@ return new class extends Migration
             $table->boolean('is_admin')->default(false);
             $table->string('profilePicturePath')->nullable();
             $table->rememberToken();
-            $table->dateTime('deleted_at')->nullable();
             $table->timestamp('last_seen')->nullable();
             $table->string('last_ip')->nullable();
             $table->unsignedBigInteger('association_id')->nullable();
