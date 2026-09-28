@@ -18,6 +18,12 @@ class Contribution extends Model
         'type',
         'status',
         'user_id',
+        'loan_duration',
+        'fund_deadline',
+        'loan_interest',
+        'fail_interest',
+        'fail_interest_type',
+        'loan_period',
         'association_id',
         'deleted_by',
     ];

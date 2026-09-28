@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Contribution;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class ContributionService
 {
@@ -66,9 +67,9 @@ class ContributionService
     public function delete($id) : bool
     {
         $find = Contribution::find($id);
-        $find->deleted_by = \Auth::id();
-//        $driver->deleted_by = \auth()->id();
-        return $find->save();
+        $find->deleted_by = Auth::id();
+        $find->save();
+        return $find->deleted;
 
     }
 }

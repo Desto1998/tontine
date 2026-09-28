@@ -9,13 +9,14 @@ use App\Services\ContributionService;
 use App\Services\LogService;
 use App\Services\MemberService;
 use App\Services\UserService;
-use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
-use Validator;
+use Yajra\DataTables\DataTables;
 
 class ContributionController extends Controller
 {
@@ -54,12 +55,16 @@ class ContributionController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['string','min:5','max:255'],
+            'name' => ['required','string','min:5','max:255'],
             'description' => ['string'],
-            'type' => ['string', 'min:5','max:50'],
+            'loan_duration' => ['int'],
+            'fund_deadline' => ['date'],
+            'interest' => ['float'],
+            'loan_period' => ['string', 'min:4'],
+            'type' => ['required','string', 'min:5','max:50'],
 
         ]);
 
@@ -71,8 +76,14 @@ class ContributionController extends Controller
         $data['name'] = $request->input('name');
         $data['description'] = $request->input('description');
         $data['type'] = $request->input('type');
-        $data['association_id'] = \Auth::user()->association_id;
-        $data['user_id'] = \Auth::id();
+        $data['loan_period'] = $request->input('loan_period');
+        $data['fund_deadline'] = $request->input('fund_deadline');
+        $data['loan_deadline'] = $request->input('loan_deadline');
+        $data['fail_interest'] = $request->input('fail_interest');
+        $data['fail_interest_type'] = $request->input('fail_interest_type');
+        $data['interest'] = $request->input('interest');
+        $data['association_id'] = Auth::user()->association_id;
+        $data['user_id'] = Auth::id();
         $member = $this->contributionService->store($data);
         if ($member) {
             $this->logService->save("Enregistrement", 'Contribution', "Enregistrement d'une cotisation ID: $member->id le" . now()." Donne: $member", $member->id);
@@ -95,7 +106,7 @@ class ContributionController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Contribution::where('contributions.association_id',\Auth::user()->association_id)
+            $data = Contribution::where('contributions.association_id',Auth::user()->association_id)
                 ->where('contributions.deleted_by', null)
                 ->join('users','contributions.user_id','users.id')
 //                ->orderBy('contributions.id', 'desc')

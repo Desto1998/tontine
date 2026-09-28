@@ -90,11 +90,11 @@ class AssociationService
      */
     public function delete($id) : bool
     {
-        $driver = Association::find($id);
-        $driver->deleted_at = date('Y-m-d H:i:s');
-//        $driver->deleted_by = \auth()->id();
+        $data = Association::find($id);
+        $data->deleted_at = date('Y-m-d H:i:s');
+//        $data->deleted_by = \auth()->id();
 
-        return $driver->save();
+        return $data->save();
 
     }
 }

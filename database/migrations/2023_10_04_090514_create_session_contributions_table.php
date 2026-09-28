@@ -15,6 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('session_id');
             $table->unsignedBigInteger('contribution_id');
+            $table->string('loan_period')->nullable();
+            $table->date('fund_deadline')->nullable();
+            $table->date('loan_duration')->nullable();
+            $table->float('loan_interest')->nullable();
+            $table->float('fail_interest')->nullable();
+            $table->string('fail_interest_type')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->softDeletes();

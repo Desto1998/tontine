@@ -11,12 +11,17 @@ class SessionContribution extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable =[
+    protected $fillable = [
         'contribution_id',
         'session_id',
         'deleted_by',
-        ]
-    ;
+        'loan_period',
+        'fund_deadline',
+        'loan_duration',
+        'loan_interest',
+        'fail_interest',
+        'fail_interest_type',
+    ];
 
     protected $casts = [
         'deleted_at' => 'datetime',

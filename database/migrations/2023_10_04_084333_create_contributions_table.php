@@ -16,9 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('type');
+            $table->string('loan_period')->nullable();
             $table->date('fund_deadline')->nullable();
-            $table->float('loan_deadline')->nullable();
-            $table->date('interest')->nullable();
+            $table->date('loan_duration')->nullable();
+            $table->float('loan_interest')->nullable();
+            $table->float('fail_interest')->nullable();
+            $table->string('fail_interest_type')->nullable();
             $table->boolean('status')->default(true);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('association_id');

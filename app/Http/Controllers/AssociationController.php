@@ -7,14 +7,14 @@ use App\Services\AssociationService;
 use App\Services\LogService;
 use App\Services\MemberService;
 use App\Services\UserService;
-use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
-use Validator;
 use Illuminate\Contracts\View\View;
+use Yajra\DataTables\DataTables;
 
 class AssociationController extends Controller
 {
