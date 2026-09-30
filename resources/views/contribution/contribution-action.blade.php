@@ -28,7 +28,13 @@
                         <input type="text" min="5" value="{{ $value->name }}" name="name" id="name_{{ $value->id }}" class="form-control" required autocomplete="name">
                         <div id="name-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
                     </div>
-
+                    @if($value->type == "Mutuelle")
+                        <div class="form-group mb-3">
+                            <label for="fund_deadline">Delais de dépot de fond<span class="text-danger">*</span></label>
+                            <input type="date" value="{{ $value->fund_deadline }}" name="fund_deadline" id="fund_deadline" class="form-control">
+                            <div id="fund_deadline-error" class="text-danger error-display" role="alert"></div>
+                        </div>
+                    @endif
                     <div class="form-group mb-3">
                         <label for="type_{{ $value->id }}">Type <span class="text-danger">*</span></label>
                         <select name="type" id="type_{{ $value->id }}" class="form-control" required>

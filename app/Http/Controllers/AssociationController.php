@@ -10,6 +10,7 @@ use App\Services\UserService;
 use Illuminate\Console\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
@@ -198,7 +199,7 @@ class AssociationController extends Controller
      */
     public function editForm(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $association = $this->associationService->show(\Auth::user()->association_id);
+        $association = $this->associationService->show(Auth::user()->association_id);
         return view('association.my_association',compact('association'));
     }
 

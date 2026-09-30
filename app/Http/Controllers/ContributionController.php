@@ -61,7 +61,7 @@ class ContributionController extends Controller
             'name' => ['required','string','min:5','max:255'],
             'description' => ['string'],
             'loan_duration' => ['int'],
-            'fund_deadline' => ['date'],
+//            'fund_deadline' => ['date'],
             'interest' => ['float'],
             'loan_period' => ['string', 'min:4'],
             'type' => ['required','string', 'min:5','max:50'],
@@ -139,10 +139,13 @@ class ContributionController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['string','min:5','max:255'],
-            'description' => ['string','max:255'],
-            'type' => ['required', 'string', 'min:5','max:50'],
-            'id' => ['required', 'integer', 'exists:contributions'],
+            'name' => ['required','string','min:5','max:255'],
+            'description' => ['string'],
+            'loan_duration' => ['int'],
+//            'fund_deadline' => ['date'],
+            'interest' => ['float'],
+            'loan_period' => ['string', 'min:4'],
+            'type' => ['required','string', 'min:5','max:50'],
 
         ]);
 
@@ -155,6 +158,12 @@ class ContributionController extends Controller
         $data['name'] = $request->input('name');
         $data['description'] = $request->input('description');
         $data['type'] = $request->input('type');
+        $data['loan_period'] = $request->input('loan_period');
+        $data['fund_deadline'] = $request->input('fund_deadline');
+        $data['loan_deadline'] = $request->input('loan_deadline');
+        $data['fail_interest'] = $request->input('fail_interest');
+        $data['fail_interest_type'] = $request->input('fail_interest_type');
+        $data['interest'] = $request->input('interest');
         $save = $this->contributionService->update($request->all()['id'],$data);
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Contribution', "Modification des informations de la cotisation ID: $id le" . now()." Donne: ", $request->all()['id']);

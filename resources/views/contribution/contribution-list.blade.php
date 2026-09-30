@@ -122,7 +122,7 @@
                         <hr>
                         <div class="form-group mb-3">
                             <label for="loan_deadline">Taux Intérêt<span class="text-danger">*</span></label>
-                            <input type="number" step="any" min="5" name="loan_deadline" id="loan_deadline" class="form-control" required>
+                            <input type="number" step="any" name="loan_deadline" id="loan_deadline" class="form-control" required>
                             <div id="loan_deadline-error" class="text-danger error-display" role="alert"></div>
                         </div>
                         <div class="row">
@@ -146,7 +146,7 @@
                         <div class="row">
                             <div class="form-group col-md-7 mb-3">
                                 <label for="fail_interest">Intérêt si échec<span class="text-danger">*</span></label>
-                                <input type="number" min="0" step="any" name="fail_interest" id="fail_interest" class="form-control" required>
+                                <input type="number" min="0" step="any" name="fail_interest" id="fail_interest" class="form-control">
                                 <div id="fail_interest-error" class="text-danger error-display" role="alert"></div>
                             </div>
 
@@ -189,16 +189,18 @@
 
 
         $(document).ready(function () {
-            $("#modal-default").dialog({
-                close: function(event, ui) {
-                    // Code à exécuter quand la modal est fermée
-                    maFonction();
-                }
-            });
-
-            function maFonction() {
-                console.log("Modal fermée !");
-            }
+            $('.fund_deadline-block').hide(300)
+            $('input[name="fund_deadline"]').attr('required', false)
+            // $("#modal-default").dialog({
+            //     close: function(event, ui) {
+            //         // Code à exécuter quand la modal est fermée
+            //         maFonction();
+            //     }
+            // });
+            //
+            // function maFonction() {
+            //     console.log("Modal fermée !");
+            // }
 
             //Initialize Select2 Elements
             $('.select2').select2()
@@ -208,7 +210,7 @@
                 theme: 'bootstrap4'
             })
             load()
-            $('.fund_deadline-block').hide(300)
+
             $('select[name="type"]').change(function (e){
                 var type = $('select[name="type"]').val()
                 if (type === "Mutuelle"){

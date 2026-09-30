@@ -6,9 +6,9 @@
 
 
 <div class="register-header">
-    <img src="{{ asset('images/logo/logo-sans-fond.png') }}" alt="GSC" class="logo-web w-50">
+    <img src="{{ asset('images/logo/logo-sans-fond.png') }}" alt="Tontine" class="logo-web w-50">
 
-    <p>Connectez-vous pour accéder à votre espace de gestion.</p>
+{{--    <p>Connectez-vous pour accéder à votre espace de gestion.</p>--}}
 </div>
 
 

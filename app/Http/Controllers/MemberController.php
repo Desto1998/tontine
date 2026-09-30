@@ -8,14 +8,15 @@ use App\Services\AssociationService;
 use App\Services\LogService;
 use App\Services\MemberService;
 use App\Services\UserService;
-use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
-use Validator;
 use Illuminate\Contracts\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class MemberController extends Controller
 {
@@ -81,7 +82,8 @@ class MemberController extends Controller
         $data['email'] = $request->input('email');
         $data['city'] = $request->input('city');
         $data['address'] = $request->input('address');
-        $data['association_id'] = \Auth::user()->association_id;
+        $data['association_id'] = Auth::user()->association_id;
+        $data['user_id'] = Auth::id();
 //        $data['has_fund'] = $request->input('has_fund');
         $data['fund_amount'] = $request->input('fund_amount');
         $member = $this->memberService->store($data);
@@ -106,7 +108,7 @@ class MemberController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Member::where('association_id',\Auth::user()->association_id)
+            $data = Member::where('association_id',Auth::user()->association_id)
                 ->where('members.deleted_at', null)
 //                ->join('users','members.user_id','users.id')
                 ->orderBy('members.id', 'desc')
