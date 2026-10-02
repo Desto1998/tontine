@@ -107,6 +107,12 @@
 </li>
 <li class="nav-header">RESOURCES</li>
 <li class="nav-item">
+    <a href="{{ route('project.index') }}" class="nav-link {{ Route::is('home') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-project-diagram"></i>
+        <p>Gestion Des Projets</p>
+    </a>
+</li>
+<li class="nav-item">
     <a href="{{ route('members.index') }}" class="nav-link">
         <i class="nav-icon fas fa-users"></i>
         <p>Membres</p>

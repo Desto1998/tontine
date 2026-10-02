@@ -96,22 +96,23 @@
                             <input type="text" min="5" name="name" id="name" class="form-control" required>
                             <div id="name-error" class="text-danger error-display" role="alert"></div>
                         </div>
-
-                        <div class="form-group mb-3">
-                            <label for="type">Type <span class="text-danger">*</span></label>
-                            <select name="type" id="type" class="form-control" required>
-                                <option>Tontine</option>
-                                <option>Caisse</option>
-                                <option>Mutuelle</option>
-                            </select>
-                            <div id="type-error" class="text-danger error-display" role="alert"></div>
+                        <div class="row">
+                            <div class="form-group col-md-5 mb-3">
+                                <label for="type">Type <span class="text-danger">*</span></label>
+                                <select name="type" id="type" class="form-control" required>
+                                    <option>Tontine</option>
+                                    <option>Caisse</option>
+                                    <option>Mutuelle</option>
+                                </select>
+                                <div id="type-error" class="text-danger error-display" role="alert"></div>
+                            </div>
+                            <div class="form-group col-md-7 mb-3">
+                                <label for="amount">Montant<span class="text-danger">*</span></label>
+                                <input type="number" min="0" name="amount" id="amount" class="form-control" required>
+                                <div id="amount-error" class="text-danger error-display" role="alert"></div>
+                            </div>
                         </div>
 
-                        <div class="form-group fund_deadline-block mb-3">
-                            <label for="fund_deadline">Delais de dépot de fond<span class="text-danger">*</span></label>
-                            <input type="date" min="{{ date('Y-m-d') }}" name="fund_deadline" id="fund_deadline" class="form-control">
-                            <div id="fund_deadline-error" class="text-danger error-display" role="alert"></div>
-                        </div>
 
                         <div class="form-group mb-3">
                             <label for="description">Description <span class="text-danger">*</span></label>
@@ -121,9 +122,9 @@
 
                         <hr>
                         <div class="form-group mb-3">
-                            <label for="loan_deadline">Taux Intérêt<span class="text-danger">*</span></label>
-                            <input type="number" step="any" name="loan_deadline" id="loan_deadline" class="form-control" required>
-                            <div id="loan_deadline-error" class="text-danger error-display" role="alert"></div>
+                            <label for="loan_interest">Intérêt des prêts<span class="text-danger"></span></label>
+                            <input type="number" step="any" name="loan_interest" id="loan_interest" class="form-control">
+                            <div id="loan_interest-error" class="text-danger error-display" role="alert"></div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-7 mb-3">
@@ -189,8 +190,8 @@
 
 
         $(document).ready(function () {
-            $('.fund_deadline-block').hide(300)
-            $('input[name="fund_deadline"]').attr('required', false)
+            // $('.fund_deadline-block').hide(300)
+            // $('input[name="fund_deadline"]').attr('required', false)
             // $("#modal-default").dialog({
             //     close: function(event, ui) {
             //         // Code à exécuter quand la modal est fermée
@@ -211,15 +212,8 @@
             })
             load()
 
-            $('select[name="type"]').change(function (e){
-                var type = $('select[name="type"]').val()
-                if (type === "Mutuelle"){
-                    $('input[name="fund_deadline"]').attr('required', true)
-                    $('.fund_deadline-block').show(300)
-                }else {
-                    $('.fund_deadline-block').hide(300)
-                }
-            });
+
+
         });
 
         // fonction qui charge les informations : les elements du tableau
@@ -507,6 +501,7 @@
         }
 
         $('.modal button[data-dismiss="modal"]').click(function (e) {
+
             load();
         });
     </script>

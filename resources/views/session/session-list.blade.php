@@ -52,7 +52,7 @@
                         <tr>
                             <th><input type="checkbox" id="check_" name="contact_form_message_id"></th>
                             <th>#</th>
-                            <th>Dégnation</th>
+                            <th>Désignation</th>
                             <th>Type</th>
                             <th>Frequence</th>
                             <th>Jour</th>

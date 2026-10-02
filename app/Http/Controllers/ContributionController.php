@@ -77,13 +77,13 @@ class ContributionController extends Controller
         $data['description'] = $request->input('description');
         $data['type'] = $request->input('type');
         $data['loan_period'] = $request->input('loan_period');
-        $data['fund_deadline'] = $request->input('fund_deadline');
         $data['loan_deadline'] = $request->input('loan_deadline');
         $data['fail_interest'] = $request->input('fail_interest');
         $data['fail_interest_type'] = $request->input('fail_interest_type');
         $data['interest'] = $request->input('interest');
         $data['association_id'] = Auth::user()->association_id;
         $data['user_id'] = Auth::id();
+        $data['amount'] = $request->input('amount');
         $member = $this->contributionService->store($data);
         if ($member) {
             $this->logService->save("Enregistrement", 'Contribution', "Enregistrement d'une cotisation ID: $member->id le" . now()." Donne: $member", $member->id);
@@ -164,6 +164,7 @@ class ContributionController extends Controller
         $data['fail_interest'] = $request->input('fail_interest');
         $data['fail_interest_type'] = $request->input('fail_interest_type');
         $data['interest'] = $request->input('interest');
+        $data['amount'] = $request->input('amount');
         $save = $this->contributionService->update($request->all()['id'],$data);
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Contribution', "Modification des informations de la cotisation ID: $id le" . now()." Donne: ", $request->all()['id']);

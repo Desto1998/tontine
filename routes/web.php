@@ -7,6 +7,7 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SanctionsController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\UserController;
@@ -86,6 +87,15 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::post('loan/store', 'store')->name('loan.store');
                 Route::post('loan/update', 'update')->name('loan.update');
                 Route::delete('loan/destroy', 'destroy')->name('loan.delete');
+            });
+
+            Route::controller(ProjectController::class)->group(function () {
+                Route::get('project', 'index')->name('project.index');
+                Route::get('project/load', 'load')->name('project.load');
+                Route::get('project/{id}', 'show')->name('project.show');
+                Route::post('project/store', 'store')->name('project.store');
+                Route::post('project/update', 'update')->name('project.update');
+                Route::delete('project/destroy', 'destroy')->name('project.delete');
             });
 
             Route::controller(SessionsController::class)->group(function () {

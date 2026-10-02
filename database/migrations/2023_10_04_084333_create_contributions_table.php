@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('type');
+            $table->float('amount')->default(0);
             $table->string('loan_period')->nullable();
             $table->date('fund_deadline')->nullable();
             $table->date('loan_duration')->nullable();

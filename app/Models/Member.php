@@ -23,6 +23,7 @@ class Member extends Model
         'association_id',
         'deleted_by',
         'user_id',
+        'status',
     ];
 
     public function association() : BelongsTo

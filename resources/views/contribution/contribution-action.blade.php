@@ -28,22 +28,30 @@
                         <input type="text" min="5" value="{{ $value->name }}" name="name" id="name_{{ $value->id }}" class="form-control" required autocomplete="name">
                         <div id="name-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
                     </div>
-                    @if($value->type == "Mutuelle")
-                        <div class="form-group mb-3">
-                            <label for="fund_deadline">Delais de dépot de fond<span class="text-danger">*</span></label>
-                            <input type="date" value="{{ $value->fund_deadline }}" name="fund_deadline" id="fund_deadline" class="form-control">
-                            <div id="fund_deadline-error" class="text-danger error-display" role="alert"></div>
+{{--                    @if($value->type == "Mutuelle")--}}
+{{--                        <div class="form-group mb-3">--}}
+{{--                            <label for="fund_deadline">Delais de dépot de fond<span class="text-danger">*</span></label>--}}
+{{--                            <input type="date" value="{{ $value->fund_deadline }}" name="fund_deadline" id="fund_deadline" class="form-control">--}}
+{{--                            <div id="fund_deadline-error" class="text-danger error-display" role="alert"></div>--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
+                    <div class="row">
+                        <div class="form-group col-md-5 mb-3">
+                            <label for="type_{{ $value->id }}">Type <span class="text-danger">*</span></label>
+                            <select name="type" id="type_{{ $value->id }}" onchange="showType({{ $value->id }})" class="form-control" required>
+                                <option {{ $value->type == "Tontine"? 'selected' : '' }}>Tontine</option>
+                                <option {{ $value->type == "Caisse"? 'selected' : '' }}>Caisse</option>
+                                <option {{ $value->type == "Mutuelle"? 'selected' : '' }}>Mutuelle</option>
+                            </select>
+                            <div id="type-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
                         </div>
-                    @endif
-                    <div class="form-group mb-3">
-                        <label for="type_{{ $value->id }}">Type <span class="text-danger">*</span></label>
-                        <select name="type" id="type_{{ $value->id }}" class="form-control" required>
-                            <option {{ $value->type == "Tontine"? 'selected' : '' }}>Tontine</option>
-                            <option {{ $value->type == "Caisse"? 'selected' : '' }}>Caisse</option>
-                            <option {{ $value->type == "Mutuelle"? 'selected' : '' }}>Mutuelle</option>
-                        </select>
-                        <div id="type-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
+                        <div class="form-group col-md-7 mb-3">
+                            <label for="amount">Montant<span class="text-danger">*</span></label>
+                            <input type="number" min="0" name="amount" value="{{ $value->amount }}" id="amount" class="form-control" required>
+                            <div id="amount-error" class="text-danger error-display" role="alert"></div>
+                        </div>
                     </div>
+
 
                     <div class="form-group mb-3">
                         <label for="description_{{ $value->id }}">Description <span class="text-danger">*</span></label>
@@ -53,7 +61,7 @@
 
                     <hr>
                     <div class="form-group mb-3">
-                        <label for="loan_duration_{{ $value->id }}">Taux Intérêt<span class="text-danger">*</span></label>
+                        <label for="loan_duration_{{ $value->id }}">Intérêt des prêts<span class="text-danger">*</span></label>
                         <input type="number" step="any" min="5" name="loan_duration" value="{{ $value->loan_duration }}" id="loan_duration_{{ $value->id }}" class="form-control" required>
                         <div id="loan_duration-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
                     </div>
@@ -65,7 +73,7 @@
                         </div>
 
                         <div class="form-group col-md-5 mb-3">
-                            <label for="loan_period_{{ $value->id }}">Periode <span class="text-danger">*</span></label>
+                            <label for="loan_period_{{ $value->id }}">Période <span class="text-danger">*</span></label>
                             <select name="loan_period" id="loan_period_{{ $value->id }}" class="form-control" required>
                                 <option {{ $value->period == "Semaine"? 'selected' : '' }}>Semaine</option>
                                 <option {{ $value->period == "Mois"? 'selected' : '' }}>Mois</option>

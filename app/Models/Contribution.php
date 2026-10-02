@@ -26,6 +26,7 @@ class Contribution extends Model
         'loan_period',
         'association_id',
         'deleted_by',
+        'amount',
     ];
 
 

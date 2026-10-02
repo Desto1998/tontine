@@ -199,6 +199,8 @@
 <script src="{{ asset('AdminLTE-3.2.0/dist/js/adminlte.min.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('AdminLTE-3.2.0/dist/js/demo.js') }}"></script>
+{{--  js de l'app      --}}
+<script src="{{ asset('js/app.js') }}"></script>
 <script>
     let currentUrl      = window.location.href;
     $('.sidebar').find('a[href="'+ currentUrl +'"]').addClass('active');

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('phone',20);
             $table->string('address');
+            $table->boolean('status')->default(1);
             $table->string('city', 80);
             $table->boolean('has_fund')->default(true);
             $table->float('fund_amount')->default(0);
