@@ -21,6 +21,7 @@ class SessionContribution extends Model
         'loan_interest',
         'fail_interest',
         'fail_interest_type',
+        'user_id',
     ];
 
     protected $casts = [

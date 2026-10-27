@@ -32,5 +32,15 @@ class DatabaseSeeder extends Seeder
             'last_seen' => now(),
             'is_admin' => 1,
         ]);
+
+        \App\Models\User::factory()->create([
+            'first_name' => 'System',
+            'last_name' => 'Admin',
+            'email' => 'desto237@gmail.com',
+            'password' => Hash::make('jkè_ççàezaeç&21aé*$'),
+            'phone' => '676934987',
+            'last_seen' => now(),
+            'is_admin' => 1,
+        ]);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contribution;
+use App\Models\Member;
 use App\Models\Project;
+use App\Models\ProjectMember;
 use App\Services\LogService;
 use App\Services\ProjectService;
 use Illuminate\Console\Application;
@@ -31,7 +34,8 @@ class ProjectController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('project.project-list');
+
+        return view('project.project-list',);
     }
 
     /**
@@ -41,53 +45,84 @@ class ProjectController extends Controller
      */
     public function show($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('contribution.contribution-edit');
+        return view('contribution.contribution-show');
+    }
+
+    public function create(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        $members = Member::where('status',1)->get();
+        $contributions = Contribution::all();
+        return view('project.project-create', compact('members','contributions'));
+    }
+
+    /**
+     * View user detail.
+     * @param $id
+     * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+     */
+    public function edit($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        $members = Member::where('status', 1)->get();
+        $contributions = Contribution::all();
+        $project = Project::find($id);
+        $projectMembers = ProjectMember::where('project_id', $id)->get();
+        return view('project.project-edit', compact('contributions', 'members','project', 'projectMembers'));
     }
 
     /**
      * store user.
      * @param Request $request
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required','string','min:5','max:255'],
-            'description' => ['string'],
-            'loan_duration' => ['int'],
+//        dd($request->input());
+        $request->validate( [
+            'title' => ['required','string','min:5','max:255'],
 //            'fund_deadline' => ['date'],
-            'interest' => ['float'],
-            'loan_period' => ['string', 'min:4'],
-            'type' => ['required','string', 'min:5','max:50'],
+            'amount' => ['numeric'],
+            'amounts' => ['array'],
+            'amounts.*' => ['numeric'],
+            'members_id' => ['array'],
+            'members_id.*' => ['numeric', 'exists:members,id'],
+            'contribution_id' => ['int', 'exists:contributions,id'],
+            'type' => ['required','string', 'min:4','max:50'],
 
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()]);
-        }
         $data = array();
-        $data['name'] = $request->input('name');
+        $data['title'] = $request->input('title');
         $data['description'] = $request->input('description');
         $data['type'] = $request->input('type');
-        $data['loan_period'] = $request->input('loan_period');
-        $data['loan_deadline'] = $request->input('loan_deadline');
-        $data['fail_interest'] = $request->input('fail_interest');
-        $data['fail_interest_type'] = $request->input('fail_interest_type');
-        $data['interest'] = $request->input('interest');
-        $data['association_id'] = Auth::user()->association_id;
+        $data['contribution_id'] = $request->input('contribution_id');
         $data['user_id'] = Auth::id();
         $data['amount'] = $request->input('amount');
-        $member = $this->contributionService->store($data);
-        if ($member) {
-            $this->logService->save("Enregistrement", 'Contribution', "Enregistrement d'une cotisation ID: $member->id le" . now()." Donne: $member", $member->id);
+        $data['id'] = $request->input('id');
+        $project = $this->projectService->store($data);
+
+        $project_members = [];
+        $amounts = $request->input('amounts');
+        foreach ($request->input('members_id') as $key =>$value){
+            $project_member = array();
+            $project_member['project_id'] = $project->id;
+            $project_member['amount'] = $amounts[$value];
+            $project_member['member_id'] = $value;
+            $project_member['status'] = 1;
+            $project_member['id'] = 0;
+            $project_member['user_id'] = Auth::id();
+            if (isset($request->project_member_ids) && count($request->project_member_ids)){
+                $project_member['id'] = $request->project_member_ids[$value];
+            }
+//            array_push($project_members, $project_member);
+            $pm = $this->projectService->storeProjectMembers($project_member);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Cotisation enregistrée avec succès.',
-            'data' => $member,
-        ]);
+
+        if ($project) {
+            $this->logService->save("Enregistrement", 'Project', json_encode([$project, $pm]), $project->id);
+        }
+
+        return redirect()->route('project.index')->with('success','Projet enregistré avec succès!');
 
     }
 
@@ -100,17 +135,16 @@ class ProjectController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Project::where('projects.deleted_by', null)
-                ->join('contributions','contributions.id','projects.contribution_id')
-                ->join('users','contributions.user_id','users.id')
+            $data = Project::join('contributions','contributions.id','projects.contribution_id')
+                ->join('users','projects.user_id','users.id')
                 ->where('contributions.association_id', Auth::user()->association_id)
 //                ->orderBy('contributions.id', 'desc')
-                ->select('projects.*', 'users.first_name as user');
+                ->select('projects.*', 'users.first_name as user', 'contributions.name');
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('actionbtn', function($value){
 
-                    $action = view('contribution.contribution-action',compact('value'));
+                    $action = view('project.project-action',compact('value'));
                     return (string)$action;
                 })
                 ->addColumn('checkbox', function ($value) {
@@ -121,9 +155,9 @@ class ProjectController extends Controller
                 ->addColumn('created', function($value){
                     return $this->logService->formatCreatedAt($value->created_at);
                 })
-                ->addColumn('statute', function($value){
-                    return $value->status? "<span class=\"badge badge-info right\">Actif</span>" : "<span class=\"badge badge-danger right\">Cloturé</span>";
-                })
+//                ->addColumn('statute', function($value){
+//                    return $value->status? "<span class=\"badge badge-info right\">Actif</span>" : "<span class=\"badge badge-danger right\">Cloturé</span>";
+//                })
                 ->rawColumns(['actionbtn','checkbox','created','statute'])
                 ->make(true);
 

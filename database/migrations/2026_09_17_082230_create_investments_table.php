@@ -3,9 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\MigrationHelpers;
 
 return new class extends Migration
 {
+    use MigrationHelpers;
     /**
      * Run the migrations.
      */
@@ -13,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('investments', function (Blueprint $table) {
             $table->id();
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->float('amount');
             $table->float('interest');
             $table->string('interest_type');
@@ -21,19 +23,14 @@ return new class extends Migration
             $table->float('total_amount');
             $table->string('status');
             $table->date('nm_time')->nullable();
-            $table->date('refund_date');
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->date('refund_date')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('contribution_id')->nullable();
             $table->unsignedBigInteger('meeting_id')->nullable();
-            $table->softDeletes();
-            $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreign('deleted_by')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->unsignedBigInteger('status_id')->default(1);
+            $this->addDatesColumns($table);
+            $this->statusForeignColumns($table);
+            $this->userForeignColumns($table);
             $table->foreign('contribution_id')->references('id')->on('contributions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

@@ -107,10 +107,27 @@
 </li>
 <li class="nav-header">RESOURCES</li>
 <li class="nav-item">
-    <a href="{{ route('project.index') }}" class="nav-link {{ Route::is('home') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-project-diagram"></i>
-        <p>Gestion Des Projets</p>
+    <a href="" class="nav-link">
+        <i class="nav-icon fa fa-project-diagram"></i>
+        <p>
+            Gestion Des Projets
+            <i class="fas fa-angle-left right"></i>
+        </p>
     </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ route('project.index') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Liste Des Projets</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('project.create') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Nouveau Projet</p>
+            </a>
+        </li>
+    </ul>
 </li>
 <li class="nav-item">
     <a href="{{ route('members.index') }}" class="nav-link">

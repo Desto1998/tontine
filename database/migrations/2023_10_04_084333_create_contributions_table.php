@@ -3,9 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\MigrationHelpers;
 
 return new class extends Migration
 {
+    use MigrationHelpers;
     /**
      * Run the migrations.
      */
@@ -26,18 +28,11 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('association_id');
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->foreign('deleted_by')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreign('association_id')->references('id')->on('associations')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->unsignedBigInteger('status_id')->default(1);
+            $this->addDatesColumns($table);
+            $this->statusForeignColumns($table);
+            $this->userForeignColumns($table);
+            $this->associationForeignColumns($table);
         });
     }
 

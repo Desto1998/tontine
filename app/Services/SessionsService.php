@@ -10,6 +10,7 @@ use App\Models\SessionMember;
 use App\Models\Sessions;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use function Symfony\Component\HttpKernel\Log\format;
 
 class SessionsService
@@ -66,11 +67,11 @@ class SessionsService
 
     public function show($id): Sessions|BelongsTo
     {
-//        $data = Sessions::where('session_id',$session_id)->first();
-//        $data['member'] = SessionMember::where('session_id',$session_id)->get()->member;
+//        $data = array();
+        $data = Sessions::with('members','contributions')->find($id);
 //        $data['contribution'] = SessionContribution::where('session_id',$session_id)->get()->contribution;
-//        return $data;
-        return Sessions::find($id);
+        return $data;
+//        return Sessions::find($id);
     }
 
     /**
@@ -101,7 +102,7 @@ class SessionsService
             $saved[$key] = SessionMember::create([
                 'member_id' => $mid,
                 'session_id' => $session_id,
-                'user_id' => \Auth::id()
+                'user_id' => Auth::id()
             ]);
         }
         return $saved;

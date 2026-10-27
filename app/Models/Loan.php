@@ -26,6 +26,7 @@ class Loan extends Model
         'create_id',
         'member_id',
         'meeting_id',
+        'status_id',
     ];
 
     public function loan(): hasMany

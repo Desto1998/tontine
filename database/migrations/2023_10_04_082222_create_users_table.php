@@ -3,9 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\MigrationHelpers;
 
 return new class extends Migration
 {
+    use MigrationHelpers;
     /**
      * Run the migrations.
      */
@@ -22,21 +24,19 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_admin')->default(false);
             $table->string('profilePicturePath')->nullable();
+            $table->text('signature')->nullable();
             $table->rememberToken();
             $table->timestamp('last_seen')->nullable();
             $table->string('last_ip')->nullable();
             $table->unsignedBigInteger('association_id')->nullable();
             $table->unsignedBigInteger('member_id')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->foreign('association_id')->references('id')->on('associations')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')
-            ;
+            $this->addDatesColumns($table);
+            $this->associationForeignColumns($table);
             $table->foreign('member_id')->references('id')->on('members')
                 ->onUpdate('cascade')
                 ->onDelete('cascade')
             ;
+
         });
     }
 

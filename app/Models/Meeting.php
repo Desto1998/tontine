@@ -27,6 +27,7 @@ class Meeting extends Model
         'total_funds',
         'total_loans',
         'total_amount',
+        'status_id',
     ];
 
     protected $casts = [
@@ -52,6 +53,14 @@ class Meeting extends Model
     public function coordinate(): BelongsTo
     {
         return $this->belongsTo(Member::class,'coordinator');
+    }
+
+    /**
+     * Get the user that perform action.
+     */
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(Sessions::class,'session_id');
     }
 
     /**

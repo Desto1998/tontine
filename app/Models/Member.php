@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -24,6 +25,7 @@ class Member extends Model
         'deleted_by',
         'user_id',
         'status',
+        'status_id',
     ];
 
     public function association() : BelongsTo
@@ -44,5 +46,15 @@ class Member extends Model
     public function deletedByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'deleted_by')->withDefault();
+    }
+
+    public function project(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'project_members')->withDefault();
+    }
+
+    public function sessions(): BelongsToMany
+    {
+        return $this->belongsToMany(Sessions::class, 'session_members','member_id', 'session_id')->withDefault();
     }
 }

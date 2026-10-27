@@ -1,11 +1,14 @@
 <?php
 
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\MigrationHelpers;
 
 return new class extends Migration
 {
+    use MigrationHelpers;
     /**
      * Run the migrations.
      */
@@ -21,12 +24,9 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('description')->nullable();
             $table->string('address')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->softDeletes();
-            $table->timestamps();
-            $table->foreign('deleted_by')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->unsignedBigInteger('status_id')->default(1);
+            $this->addDatesColumns($table);
+            $this->statusForeignColumns($table);
         });
     }
 

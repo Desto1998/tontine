@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Models\Project;
+use App\Models\ProjectMember;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
@@ -21,14 +22,25 @@ class ProjectService
     }
 
     /**
-     * store an Project
+     * store a Project
      *
      * @param $data
      * @return Project
      */
     public function store($data): Project
     {
-        return Project::Project($data);
+        return Project::updateOrCreate(['id' => $data['id']],$data);
+    }
+
+    /**
+     * store Project Members
+     *
+     * @param $data
+     * @return mixed
+     */
+    public function storeProjectMembers($data): mixed
+    {
+        return ProjectMember::updateOrCreate(['id' => $data['id']],$data);
     }
 
     /**
@@ -70,5 +82,20 @@ class ProjectService
         $find->deleted_by = Auth::id();
         return $find->save();
 
+    }
+
+
+    /**
+     * Delete Project Members
+     * @param $id
+     * @return bool
+     */
+    public function deleteProjectMembers($id) : bool
+    {
+        ProjectMember::where('project_id',$id)->update([
+            'deleted_by' => Auth::id()
+        ]);
+
+        return ProjectMember::where('project_id',$id)->delete();
     }
 }

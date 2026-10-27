@@ -201,6 +201,7 @@
 <script src="{{ asset('AdminLTE-3.2.0/dist/js/demo.js') }}"></script>
 {{--  js de l'app      --}}
 <script src="{{ asset('js/app.js') }}"></script>
+@include('layouts.partials._toastr-message')
 <script>
     let currentUrl      = window.location.href;
     $('.sidebar').find('a[href="'+ currentUrl +'"]').addClass('active');

@@ -25,6 +25,7 @@ class Investment extends Model
         'user_id',
         'contribution_id',
         'meeting_id',
+        'status_id',
     ];
 
     protected $casts = [

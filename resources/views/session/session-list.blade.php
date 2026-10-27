@@ -121,10 +121,10 @@
                                 <div class="form-group mb-3">
                                     <label for="frequency">Fréquence <span class="text-danger">*</span></label>
                                     <select name="frequency" id="frequency" class="form-control" required>
-                                        <option>une fois par mois</option>
+                                        <option>Une fois par mois</option>
                                         <option>Aprés chaque deux semaines</option>
-                                        <option>chaque semaine</option>
-                                        <option>chaque jour</option>
+                                        <option>Chaque semaine</option>
+                                        <option>Chaque jour</option>
                                     </select>
                                     <div id="frequency-error" class="text-danger error-display" role="alert"></div>
                                 </div>

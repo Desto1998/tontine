@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,6 +28,7 @@ class Contribution extends Model
         'association_id',
         'deleted_by',
         'amount',
+        'status_id',
     ];
 
 
@@ -50,8 +52,10 @@ class Contribution extends Model
     /**
      * Get the contributions sessions.
      */
-    public function sessions(): HasMany
+    public function sessions(): BelongsToMany
     {
-        return $this->hasMany(Sessions::class);
+        return $this->belongsToMany(Sessions::class, 'session_contributions',);
     }
+
+
 }

@@ -76,10 +76,10 @@
                                 <div class="form-group mb-3">
                                     <label for="frequency">Fréquence <span class="text-danger">*</span></label>
                                     <select name="frequency" id="frequency" class="form-control" required>
-                                        <option>une fois par mois</option>
-                                        <option>Aprés chaque deux semaines</option>
-                                        <option>chaque semaine</option>
-                                        <option>chaque jour</option>
+                                        <option {{ $session->frequency == 'Une fois par mois' ? 'selected' : '' }}>Une fois par mois</option>
+                                        <option {{ $session->frequency == 'Aprés chaque deux semaines' ? 'selected' : '' }}>Aprés chaque deux semaines</option>
+                                        <option {{ $session->frequency == 'Chaque semaine' ? 'selected' : '' }}>Chaque semaine</option>
+                                        <option {{ $session->frequency == 'Chaque jour' ? 'selected' : '' }}>Chaque jour</option>
                                     </select>
                                     <div id="frequency-error" class="text-danger error-display" role="alert"></div>
                                 </div>
@@ -88,14 +88,14 @@
                                 <div class="form-group mb-3">
                                     <label for="meeting_day">Jour de séance <span class="text-danger">*</span></label>
                                     <select name="meeting_day" id="meeting_day" class="form-control">
-                                        <option></option>
-                                        <option>Dimanche</option>
-                                        <option>Lundi</option>
-                                        <option>Mardi</option>
-                                        <option>Mercredi</option>
-                                        <option>Jeudi</option>
-                                        <option>Vendredi</option>
-                                        <option>Samedi</option>
+                                        <option {{ $session->meeting_day == '' ? 'selected' : '' }}></option>
+                                        <option {{ $session->meeting_day == 'Dimanche' ? 'selected' : '' }}>Dimanche</option>
+                                        <option {{ $session->meeting_day == 'Lundi' ? 'selected' : '' }}>Lundi</option>
+                                        <option {{ $session->meeting_day == 'Mardi' ? 'selected' : '' }}>Mardi</option>
+                                        <option {{ $session->meeting_day == 'Mercredi' ? 'selected' : '' }}>Mercredi</option>
+                                        <option {{ $session->meeting_day == 'Jeudi' ? 'selected' : '' }}>Jeudi</option>
+                                        <option {{ $session->meeting_day == 'Vendredi' ? 'selected' : '' }}>Vendredi</option>
+                                        <option {{ $session->meeting_day == 'Samedi' ? 'selected' : '' }}>Samedi</option>
                                     </select>
                                     <div id="meeting_day-error" class="text-danger error-display" role="alert"></div>
                                 </div>
@@ -123,8 +123,17 @@
                                 <select name="member_ids[]" id="member_ids" class="select2 form-control" multiple="multiple"
                                         data-placeholder="Selectionner les membres qui vont participer">
                                     <option></option>
+
                                     @foreach($members as $member)
-                                        <option
+                                        @php
+                                            $selected= '';
+                                            foreach ($session->members as $mem){
+                                                if ($mem->id == $member->id){
+                                                    $selected= 'selected';
+                                                }
+                                            }
+                                        @endphp
+                                        <option  {{ $selected }}
                                             value="{{ $member->id }}">{{ $member->first_name }} {{ $member->last_name }}</option>
                                     @endforeach
                                 </select>
@@ -136,7 +145,15 @@
                                         multiple="multiple" data-placeholder="Selectionner des cotisations">
                                     <option></option>
                                     @foreach($contributions as $contribution)
-                                        <option value="{{ $contribution->id }}">{{ $contribution->name }}</option>
+                                        @php
+                                            $selected= '';
+                                            foreach ($session->contributions as $mem){
+                                                if ($mem->id == $contribution->id){
+                                                    $selected= 'selected';
+                                                }
+                                            }
+                                        @endphp
+                                        <option {{ $selected }} value="{{ $contribution->id }}">{{ $contribution->name }}</option>
                                     @endforeach
                                 </select>
                                 <div id="contribution_ids-error" class="text-danger error-display" role="alert"></div>

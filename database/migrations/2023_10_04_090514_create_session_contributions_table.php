@@ -1,11 +1,13 @@
 <?php
 
+use App\Traits\MigrationHelpers;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    use MigrationHelpers;
     /**
      * Run the migrations.
      */
@@ -21,12 +23,9 @@ return new class extends Migration
             $table->float('loan_interest')->nullable();
             $table->float('fail_interest')->nullable();
             $table->string('fail_interest_type')->nullable();
-            $table->timestamps();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->softDeletes();
-            $table->foreign('deleted_by')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $this->addDatesColumns($table);
+            $this->userForeignColumns($table);
             $table->foreign('session_id')->references('id')->on('sessions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

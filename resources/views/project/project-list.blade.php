@@ -41,10 +41,9 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Liste Des Projet</h3>
-                    <button type="button" class="btn btn-primary float-right" data-toggle="modal"
-                            data-target="#modal-default">
+                    <a href="{{ route('project.create') }}" class="btn btn-primary float-right">
                         Ajouter
-                    </button>
+                    </a>
                 </div>
                 <div class="card-body">
                     <table id="infosTable" class="table table-bordered table-striped text-center">
@@ -53,9 +52,10 @@
                             <th><input type="checkbox" id="check_" name="contact_form_message_id"></th>
                             <th>#</th>
                             <th>Titre</th>
-                            <th>Status</th>
+                            <th>Cotisation</th>
                             <th>Type</th>
                             <th>Budget</th>
+{{--                            <th>Status</th>--}}
                             <th>Description</th>
                             <th>Créé par</th>
                             <th data-priority="2">Action</th>
@@ -81,82 +81,6 @@
 
 
 
-    <!-- Add new modal -->
-    <div class="modal fade" id="modal-default">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Ajouter Projet</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="#" id="save-form" method="post">
-                        <div class="form-group mb-3">
-                            <label for="title">Titre du projet<span class="text-danger">*</span></label>
-                            <input type="text" min="5" name="title" id="title" class="form-control" required>
-                            <div id="name-error" class="text-danger error-display" role="alert"></div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-5 mb-3">
-                                <label for="type">Type Montant <span class="text-danger">*</span></label>
-                                <select name="type" id="type" class="form-control" required>
-                                    <option>Fixe</option>
-                                    <option>Non Fixe</option>
-                                </select>
-                                <div id="type-error" class="text-danger error-display" role="alert"></div>
-                            </div>
-                            <div class="form-group col-md-7 mb-3">
-                                <label for="amount">Montant<span class="text-danger">*</span></label>
-                                <input type="number" min="0" name="amount" id="amount" class="form-control" required>
-                                <div id="amount-error" class="text-danger error-display" role="alert"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="contribution_id">Cotisation associée <span class="text-danger">*</span></label>
-                            <select name="contribution_id" id="contribution_id" class="form-control" required>
-                                <option>Cotisation</option>
-                            </select>
-                            <div id="type-error" class="text-danger error-display" role="alert"></div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="member_ids">Membres Participants<span class="text-danger">*</span></label>
-                            <select name="member_ids[]" id="member_ids" class="select2" multiple="multiple" data-placeholder="Selectionner les membres qui vont participer">
-                                <option></option>
-                                @foreach($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->first_name }} {{ $member->last_name }}</option>
-                                @endforeach0
-                            </select>
-                            <div id="member_ids-error" class="text-danger error-display" role="alert"></div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="description">Description <span class="text-danger">*</span></label>
-                            <textarea name="description" id="description" class="form-control" required></textarea>
-                            <div id="description-error" class="text-danger error-display" role="alert"></div>
-                        </div>
-
-                        <div class="my-3">
-                            <div class="loading">En cours...</div>
-                            <div class="error-message"></div>
-                            <div class="sent-message">Enregistré avec succès</div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="save-btn">Enregistrer</button>
-                        </div>
-                    </form>
-
-                </div>
-
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <!-- end new modal -->
 
 @Endsection
 @section('script')
@@ -267,7 +191,7 @@
                     {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
                     {data: 'DT_RowIndex', name: 'id', orderable: true, searchable: true},
                     {data: 'title', name: 'title'},
-                    {data: 'statute', name: 'status'},
+                    {data: 'name', name: 'contributions.name'},
                     {data: 'type', name: 'type'},
                     {data: 'amount', name: 'amount'},
                     {data: 'description', name: 'description'},

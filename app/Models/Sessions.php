@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -23,6 +24,7 @@ class Sessions extends Model
         'user_id',
         'contribution_id',
         'deleted_by',
+        'status_id',
     ];
 
     protected $casts = [
@@ -42,11 +44,13 @@ class Sessions extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the contributions sessions.
-     */
-    public function sessions(): HasMany
+    public function members(): BelongsToMany
     {
-        return $this->hasMany(Sessions::class);
+        return $this->belongsToMany(Member::class, 'session_members', 'member_id', 'session_id');
+    }
+
+    public function contributions(): BelongsToMany
+    {
+        return $this->belongsToMany(Contribution::class, 'session_contributions', 'contribution_id', 'session_id');
     }
 }

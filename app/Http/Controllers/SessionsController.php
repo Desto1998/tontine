@@ -8,13 +8,14 @@ use App\Services\LogService;
 use App\Services\MemberService;
 use App\Services\SanctionService;
 use App\Services\SessionsService;
-use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
-use Validator;
+use Yajra\DataTables\DataTables;
 
 class SessionsController extends Controller
 {
@@ -51,7 +52,8 @@ class SessionsController extends Controller
         $contributions = $this->contributionService->getAll();
         $members = $this->memberService->getAll();
         $session = $this->sessionsService->show($id);
-        return view('session.session-edit',compact('session','members','contributions'));
+//        dd($session, $members,$contributions);
+        return view('session.session-edit',compact('session','contributions','members'));
     }
 
     /**
@@ -119,7 +121,7 @@ class SessionsController extends Controller
 
             $data = Sessions::join('users','sessions.user_id','users.id')
                 ->where('sessions.deleted_by', null)
-                ->where('users.association_id', \Auth::user()->association_id)
+                ->where('users.association_id', Auth::user()->association_id)
                 ->orderBy('sessions.id', 'desc')
                 ->select('sessions.*','users.first_name as user');
             return Datatables::of($data)

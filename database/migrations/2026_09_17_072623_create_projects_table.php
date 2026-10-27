@@ -3,9 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\MigrationHelpers;
 
 return new class extends Migration
 {
+    use MigrationHelpers;
     /**
      * Run the migrations.
      */
@@ -17,18 +19,13 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->float('amount');
             $table->enum('type', ['fixe', 'Non fixe']);
-            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('contribution_id')->nullable();
             $table->unsignedBigInteger('meeting_id')->nullable();
-            $table->softDeletes();
-            $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreign('deleted_by')->references('id')->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->unsignedBigInteger('status_id')->default(1);
+            $this->addDatesColumns($table);
+            $this->statusForeignColumns($table);
+            $this->userForeignColumns($table);
             $table->foreign('contribution_id')->references('id')->on('contributions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

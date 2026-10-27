@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Permission;
 use App\Models\UserPermission;
+use Illuminate\Support\Facades\Auth;
 
 class PermissionService
 {
@@ -76,4 +77,84 @@ class PermissionService
         }
         return $tabID;
     }
+
+    public function canEdit()
+    {
+
+    }
+
+    public function canPrint()
+    {
+
+    }
+
+    public function canDelete()
+    {
+
+    }
+
+    public function canListAll()
+    {
+
+    }
+
+//    Fonction en vue des traitements des demandes d'achat
+    public static function canAcceptDA($departement_id) : bool
+    {
+        $can_accept = false;
+        if (Auth::user()->is_admin == 1){
+            return true;
+        }
+//        if ($departement_id == Auth::user()->iddepartement){
+//            return Departement::where('responsable_id', Auth::id())->exists();
+//        }
+        if (\App\Models\UserPermission::checkPermission('accept_DA')){
+            return true;
+        }
+        return false;
+    }
+
+    public static function canApproveDA() : bool
+    {
+        if (Auth::user()->is_admin == 1){
+            return true;
+        }
+        if (\App\Models\UserPermission::checkPermission('approve_DA')){
+            return true;
+        }
+        return false;
+    }
+
+    public static function canConfirmDA() : bool
+    {
+        if (Auth::user()->is_admin == 1){
+            return true;
+        }
+        if (\App\Models\UserPermission::checkPermission('cash_manager')){
+            return true;
+        }
+        return false;
+    }
+    public static function canValidateDA() : bool
+    {
+        if (Auth::user()->is_admin == 1){
+            return true;
+        }
+        return false;
+    }
+
+    public static function canCancelDA($departement_id): bool
+    {
+        if (Auth::user()->is_admin == 1){
+            return true;
+        }
+        if (self::canApproveDA()){
+            return true;
+        }
+        if (self::canAcceptDA($departement_id)){
+            return true;
+        }
+        return false;
+    }
+
 }

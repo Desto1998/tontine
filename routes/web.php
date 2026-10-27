@@ -92,7 +92,9 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
             Route::controller(ProjectController::class)->group(function () {
                 Route::get('project', 'index')->name('project.index');
                 Route::get('project/load', 'load')->name('project.load');
+                Route::get('project/create', 'create')->name('project.create');
                 Route::get('project/{id}', 'show')->name('project.show');
+                Route::get('project/edit/{id}', 'edit')->name('project.edit');
                 Route::post('project/store', 'store')->name('project.store');
                 Route::post('project/update', 'update')->name('project.update');
                 Route::delete('project/destroy', 'destroy')->name('project.delete');

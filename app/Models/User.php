@@ -32,6 +32,7 @@ class User extends Authenticatable
         'password',
         'association_id',
         'member_id',
+        'signature',
     ];
 
     public function deletedByUser(): BelongsTo
