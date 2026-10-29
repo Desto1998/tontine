@@ -43,6 +43,6 @@ class UserRole extends Model
 
     public static function checkRole($role): bool
     {
-        return in_array($role,  ('ROLES'))   ;
+        return in_array($role,  session('ROLES'))   ;
     }
 }

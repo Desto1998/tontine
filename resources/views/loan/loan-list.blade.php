@@ -138,17 +138,22 @@
                                 </div>
                             </div>
                         </div>
+                        @if(!\App\Models\UserRole::checkRole('Member'))
+                            <div class="form-group mb-3">
+                                <label for="member_id">Membres <span class="text-danger">*</span></label>
+                                <select name="member_id" id="member_id" class="form-control select2">
+                                    <option value="">Sélectionner un membre</option>
+                                    @foreach($members as $member)
+                                        <option value="{{ $member->id }}">{{ $member->first_name }} {{ $member->last_name }}</option>
+                                    @endforeach
+                                </select>
+                                <div id="member_id-error" class="text-danger error-display" role="alert"></div>
+                            </div>
+                        @else
+                            <input type="hidden" name="member_id" value="{{ \Illuminate\Support\Facades\Auth::user()->member_id }}">
+                        @endif
 
-                        <div class="form-group mb-3">
-                            <label for="member_id">Membres <span class="text-danger">*</span></label>
-                            <select name="member_id" id="member_id" class="form-control select2">
-                                <option></option>
-                                @foreach($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->first_name }} {{ $member->last_name }}</option>
-                                @endforeach
-                            </select>
-                            <div id="member_id-error" class="text-danger error-display" role="alert"></div>
-                        </div>
+
                         <div class="form-group mb-3">
                             <label for="contribution_id">Cotisations <span class="text-danger">*</span></label>
                             <select name="contribution_id" id="contribution_id" class="form-control select2">

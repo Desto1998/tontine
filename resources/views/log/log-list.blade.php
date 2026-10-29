@@ -160,7 +160,7 @@
                     {data: 'DT_RowIndex', name: 'id', orderable: true, searchable: true},
                     {data: 'action', name: 'action'},
                     {data: 'model', name: 'model'},
-                    {data: 'description', name: 'description',},
+                    {data: 'objet_limit', name: 'description',},
                     {data: 'email', name: 'users.email'},
                     {data: 'created', name: 'logs.created_at'},
                     {data: 'actionbtn', name: 'actionbtn', orderable: false, searchable: false},

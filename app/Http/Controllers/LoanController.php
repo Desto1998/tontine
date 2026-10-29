@@ -7,13 +7,14 @@ use App\Services\ContributionService;
 use App\Services\LoanService;
 use App\Services\LogService;
 use App\Services\MemberService;
-use DataTables;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
-use Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class LoanController extends Controller
 {
@@ -84,7 +85,7 @@ class LoanController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 //        $request->all()['association_id'] = \Auth::user()->association_id;
-        $request->all()['user_id'] = \Auth::user()->id;
+        $request->all()['user_id'] = Auth::user()->id;
 
         $session = $this->loanService->store($request->all());
         if ($session) {
@@ -113,9 +114,14 @@ class LoanController extends Controller
                 ->join('contributions', 'loans.contribution_id', 'contributions.id')
                 ->join('members', 'members.id', 'loans.member_id')
                 ->where('loans.deleted_by', null)
-                ->where('contributions.association_id', \Auth::user()->association_id)
-                ->orderBy('loans.id', 'desc')
-                ->select('loans.*', 'users.first_name as user', 'contributions.name as contribution', 'members.first_name', 'members.last_name');
+                ->where('contributions.association_id', Auth::user()->association_id)
+                ->orderBy('loans.id', 'desc');
+
+            if (\App\Models\UserRole::checkRole('Member')){
+                $data->where('loans.user_id', Auth::id());
+            }
+            $data->select('loans.*', 'users.first_name as user', 'contributions.name as contribution', 'members.first_name', 'members.last_name');
+
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('actionbtn', function ($value) {

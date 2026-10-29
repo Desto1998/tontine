@@ -17,108 +17,109 @@ class StatusSeeder extends Seeder
         DB::table('statuses')->insert([
             'id' => 1,
             'code' => 0,
-            'label' => 'Nouveau',
+            'title' => 'Nouveau',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 2,
             'code' => 5,
-            'label' => 'Validé', // Attribué
+            'title' => 'En Attente',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 3,
             'code' => 10,
-            'label' => 'En cours',
+            'title' => 'Validé', // Attribué
         ]);
 
         DB::table('statuses')->insert([
             'id' => 4,
             'code' => 15,
-            'label' => 'En Attente',
+            'title' => 'En cours',
         ]);
+
 
         DB::table('statuses')->insert([
             'id' => 5,
             'code' => 20,
-            'label' => 'Cotiser',
+            'title' => 'Cotiser',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 6,
             'code' => 25,
-            'label' => 'Payé',
+            'title' => 'Payé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 7,
             'code' => 30,
-            'label' => 'Décaissé',
+            'title' => 'Décaissé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 8,
             'code' => 35,
-            'label' => 'Remboursé',
+            'title' => 'Remboursé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 9,
             'code' => 40,
-            'label' => 'Encaissé',
+            'title' => 'Encaissé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 10,
             'code' => 45,
-            'label' => 'Encaissé',
+            'title' => 'Encaissé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 11,
             'code' => 50,
-            'label' => 'Terminé',
+            'title' => 'Terminé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 12,
             'code' => 55,
-            'label' => 'Reconfirmé',
+            'title' => 'Reconfirmé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 13,
             'code' => 60,
-            'label' => 'Reporté',
+            'title' => 'Reporté',
         ]);
         DB::table('statuses')->insert([
             'id' => 14,
             'code' => 65,
-            'label' => 'Gelé',
+            'title' => 'Gelé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 15,
             'code' => 70,
-            'label' => 'Annulé',
+            'title' => 'Annulé',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 16,
             'code' => 75,
-            'label' => 'Inactif',
+            'title' => 'Inactif',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 17,
             'code' => 80,
-            'label' => 'Echoué',
+            'title' => 'Echoué',
         ]);
 
         DB::table('statuses')->insert([
             'id' => 18,
             'code' => 85,
-            'label' => 'Refusé',
+            'title' => 'Refusé',
         ]);
 
 

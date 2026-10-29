@@ -104,6 +104,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('sessions', 'index')->name('sessions.index');
                 Route::get('sessions/load', 'load')->name('sessions.load');
                 Route::get('sessions/{id}', 'show')->name('sessions.show');
+                Route::get('sessions/setting/{id}', 'setting')->name('sessions.setting');
                 Route::get('sessions/edit/{id}', 'edit')->name('sessions.edit');
                 Route::post('sessions/store', 'store')->name('sessions.store');
                 Route::post('sessions/update', 'update')->name('sessions.update');

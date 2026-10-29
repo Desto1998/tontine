@@ -129,6 +129,7 @@
         </li>
     </ul>
 </li>
+
 <li class="nav-item">
     <a href="{{ route('members.index') }}" class="nav-link">
         <i class="nav-icon fas fa-users"></i>
@@ -141,30 +142,31 @@
         <p>Mon association</p>
     </a>
 </li>
-<li class="nav-item">
-    <a href="{{ route('admin.associations.index') }}" class="nav-link">
-        <i class="nav-icon fa fa-house-user"></i>
-        <p>
-            Associations
-            <i class="fas fa-angle-left right"></i>
-        </p>
-    </a>
-    <ul class="nav nav-treeview">
-        <li class="nav-item">
-            <a href="{{ route('admin.associations.index') }}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Associations</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ route('members.index') }}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Membres</p>
-            </a>
-        </li>
-    </ul>
-</li>
+
 @if(\App\Models\UserRole::checkRole('Administrateur') || \App\Models\UserPermission::checkPermission('user-list') || Auth::user()->is_admin)
+    <li class="nav-item">
+        <a href="{{ route('admin.associations.index') }}" class="nav-link">
+            <i class="nav-icon fa fa-house-user"></i>
+            <p>
+                Associations
+                <i class="fas fa-angle-left right"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ route('admin.associations.index') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Associations</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('members.index') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Membres</p>
+                </a>
+            </li>
+        </ul>
+    </li>
     <li class="nav-header">APPLICATION</li>
 
     <li class="nav-item">

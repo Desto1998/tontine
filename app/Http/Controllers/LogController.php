@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Log;
 use App\Services\LogService;
-use DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class LogController extends Controller
 {
@@ -27,11 +28,8 @@ class LogController extends Controller
 
     public function show($id)
     {
-        $subscribe = Log::find($id);
-        return response()->json([
-            'status' => 'success',
-            'subscribe' => $subscribe,
-        ]);
+        $log = Log::with('user')->find($id);
+        return view('log.log-show', compact('log'));
     }
     public function loadLogs(): bool|\Illuminate\Http\JsonResponse
     {
@@ -52,7 +50,9 @@ class LogController extends Controller
                 })
                 ->addColumn('created', function($value){
                     return $this->logService->formatCreatedAt($value->created_at);
-                })
+                })->addColumn('objet_limit', function ($value) {
+                    return Str::limit($value->description, 60);
+                })->with('objet_limit')
                 ->rawColumns(['actionbtn','checkbox','created'])
                 ->make(true);
 

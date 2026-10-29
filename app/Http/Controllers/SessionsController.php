@@ -298,4 +298,19 @@ class SessionsController extends Controller
 
         return false;
     }
+
+    /**
+     * setting for session
+     * .
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|View
+     */
+    public function setting($id)
+    {
+        $session = $this->sessionsService->show($id);
+        $contributions = $this->contributionService->getAll();
+        $members = $this->memberService->getAll();
+        return view('session.session-setting',compact('session', 'contributions','members'));
+
+    }
 }
