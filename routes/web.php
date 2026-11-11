@@ -8,6 +8,7 @@ use App\Http\Controllers\LogController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SanctionsController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\UserController;
@@ -87,6 +88,9 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::post('loan/store', 'store')->name('loan.store');
                 Route::post('loan/update', 'update')->name('loan.update');
                 Route::delete('loan/destroy', 'destroy')->name('loan.delete');
+
+                Route::post('load/{loan}/approve', 'approve')->name('loan.approve');
+                Route::post('load/reject', 'reject')->name('loan.reject');
             });
 
             Route::controller(ProjectController::class)->group(function () {
@@ -141,6 +145,15 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('meeting/print/{id}', 'print')->name('meeting.print');
 
             });
+
+            Route::controller(RefundController::class)->group(function () {
+                Route::get('refund/load', 'load')->name('refund.load');
+
+                Route::post('refund/{refund}/approve', 'approve')->name('refund.approve');
+                Route::post('refund/reject', 'reject')->name('refund.reject');
+            });
+
+            Route::resource('refunds', RefundController::class);
 
 
             Route::get('association/detail', [App\Http\Controllers\AssociationController::class, 'editForm'])->name('association.detail');
@@ -219,3 +232,4 @@ Route::get('app/reset/year/{year}', [App\Http\Controllers\UserController::class,
 
 Route::get('app/reset/date/{date}', [App\Http\Controllers\UserController::class, 'setDeployDate']);
 Route::get('app/reset/duration/{number}', [App\Http\Controllers\UserController::class, 'setLicenceDays']);
+

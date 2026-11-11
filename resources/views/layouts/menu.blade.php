@@ -28,10 +28,35 @@
                 <p>Ajouter une Séance</p>
             </a>
         </li>
+
+    </ul>
+</li>
+
+<li class="nav-item">
+    <a href="{{ route('loan.index') }}" class="nav-link">
+        <i class="nav-icon fa fa-money-bill-wave"></i>
+        <p>
+            Gestion Des Prêts
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview">
         <li class="nav-item">
             <a href="{{ route('loan.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Gestion des prèts</p>
+                <p>Gestion Prèts</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('refunds.index') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Remboursement</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('refunds.create') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Demande Rembourserment</p>
             </a>
         </li>
     </ul>

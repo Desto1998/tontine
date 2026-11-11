@@ -21,7 +21,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>EDITER UNE REUNION</h1>
+                        <h1>SIEGER UNE REUNION</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="card-body">
-                    <a href="{{ route('meeting.print',['id'=>$meeting->id]) }}" class="btn btn-light float-right">
+                    <a href="{{ route('meeting.print',['id'=>$meeting->id]) }}" target="_blank" class="btn btn-light float-right">
                         <i class="fa fa-file-pdf"></i> Imprimer
                     </a>
                     <form action="#" id="save-form" method="post">

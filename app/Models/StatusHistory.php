@@ -15,10 +15,16 @@ class StatusHistory extends Model
     protected $fillable = [
         'status_id',
         'old_status_id',
-        'incident_id',
         'comment',
         'user_id',
         'deleted_at',
+        'refund_id',
+        'loan_id',
+        'contribution_id',
+        'investment_id',
+        'member_id',
+        'project_id',
+        'session_id',
     ];
 
     public function status() : BelongsTo

@@ -101,17 +101,17 @@
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                         <div class="row">
                             <div class="form-group col-md-6 mb-3">
-                                <label for="name">Désignation<span class="text-danger">*</span></label>
-                                <input type="text" name="name" id="reason" class="form-control" required
-                                       autocomplete="name">
-                                <div id="name-error" class="text-danger error-display" role="alert"></div>
+                                <label for="reason">Raison<span class="text-danger">*</span></label>
+                                <input type="text" name="reason" id="reason" class="form-control" required
+                                       autocomplete="reason" placeholder="Raison du prêt">
+                                <div id="reason-error" class="text-danger error-display" role="alert"></div>
                             </div>
                             <div class="form-group col-md-6 mb-3">
                                 <label for="type">Type<span class="text-danger">*</span></label>
                                 <select name="type" id="type" class="form-control">
                                     <option>Remboursable</option>
-                                    <option>Rembousser sans intérèt</option>
-                                    <option>Non remboursable</option>
+{{--                                    <option>Rembousser sans intérêt</option>--}}
+{{--                                    <option>Non remboursable</option>--}}
                                 </select>
                                 <div id="type-error" class="text-danger error-display" role="alert"></div>
                             </div>
@@ -120,24 +120,36 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="amount">Montant <span class="text-danger">*</span></label>
-                                    <input type="number" min="0" name="amount" id="amount"
-                                           class="form-control" required autocomplete="amount">
-                                    <div id="amount-error" class="text-danger error-display" role="alert"></div>
+                                    <label for="contribution_id">Cotisations <span class="text-danger">*</span></label>
+                                    <select name="contribution_id" id="contribution_id" class="form-control select2">
+                                        <option></option>
+                                        @foreach($contributions as $contribution)
+                                            <option value="{{ $contribution->id }}">{{ $contribution->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="contribution_id-error" class="text-danger error-display" role="alert"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="interest_type">Type d'intérèt <span class="text-danger">*</span></label>
-                                    <select name="interest_type" id="interest_type" class="form-control">
-                                        <option></option>
-                                        <option>Pourcentage(%)</option>
-                                        <option>Montant(FCFA)</option>
-                                    </select>
-                                    <div id="interest_type-error" class="text-danger error-display" role="alert"></div>
+                                    <label for="amount">Montant <span class="text-danger">*</span></label>
+                                    <input type="number" min="0" name="amount" id="amount" value="0"
+                                           class="form-control" required autocomplete="amount">
+                                    <div id="amount-error" class="text-danger error-display" role="alert"></div>
                                 </div>
                             </div>
                         </div>
+
+{{--                        <div class="form-group mb-3">--}}
+{{--                            <label for="interest_type">Type d'intérèt <span class="text-danger">*</span></label>--}}
+{{--                            <select name="interest_type" id="interest_type" class="form-control">--}}
+{{--                                <option></option>--}}
+{{--                                <option>Pourcentage(%)</option>--}}
+{{--                                <option>Montant(FCFA)</option>--}}
+{{--                            </select>--}}
+{{--                            <div id="interest_type-error" class="text-danger error-display" role="alert"></div>--}}
+{{--                        </div>--}}
+
                         @if(!\App\Models\UserRole::checkRole('Member'))
                             <div class="form-group mb-3">
                                 <label for="member_id">Membres <span class="text-danger">*</span></label>
@@ -153,25 +165,26 @@
                             <input type="hidden" name="member_id" value="{{ \Illuminate\Support\Facades\Auth::user()->member_id }}">
                         @endif
 
-
-                        <div class="form-group mb-3">
-                            <label for="contribution_id">Cotisations <span class="text-danger">*</span></label>
-                            <select name="contribution_id" id="contribution_id" class="form-control select2">
-                                <option></option>
-                                @foreach($contributions as $contribution)
-                                    <option value="{{ $contribution->id }}">{{ $contribution->name }}</option>
-                                @endforeach
-                            </select>
-                            <div id="contribution_id-error" class="text-danger error-display" role="alert"></div>
-                        </div>
                         <div class="row">
-                            <div class="form-group col-md-6 mb-3">
+                            <div class="form-group col-md-3 mb-3">
                                 <label for="return_date">Date remboursement <span class="text-danger">*</span></label>
                                 <input type="date" min="{{ date('Y-m-d') }}" name="return_date" id="return_date" class="form-control" required
-                                       autocomplete="return_date">
+                                       autocomplete="return_date" readonly>
                                 <div id="return_date-error" class="text-danger error-display" role="alert"></div>
                             </div>
-                            <div class="form-group col-md-6 mb-3">
+                            <div class="form-group col-md-3 mb-3">
+                                <label for="interest">Intérêt(en %)<span class="text-danger">*</span></label>
+                                <input type="number" name="interest" id="interest" class="form-control" required
+                                       autocomplete="" readonly value="0">
+                                <div id="interest-error" class="text-danger error-display" role="alert"></div>
+                            </div>
+                            <div class="form-group col-md-3 mb-3">
+                                <label for="interest_amount">Montant Intérêt<span class="text-danger">*</span></label>
+                                <input type="number" name="interest_amount" id="interest_amount" class="form-control" required
+                                       autocomplete="" readonly value="0">
+                                <div id="interest_amount-error" class="text-danger error-display" role="alert"></div>
+                            </div>
+                            <div class="form-group col-md-3 mb-3">
                                 <label for="total_amount">Total à rembousser<span class="text-danger">*</span></label>
                                 <input type="number" name="total_amount" id="total_amount" class="form-control" required
                                        autocomplete="" readonly value="0">
@@ -204,6 +217,7 @@
 @section('script')
 
     <script>
+        let contributions = @json($contributions);
         $(document).ready(function () {
             //Initialize Select2 Elements
             $('.select2').select2()
@@ -212,7 +226,56 @@
             $('.select2bs4').select2({
                 theme: 'bootstrap4'
             })
-            load()
+            load();
+            console.log(contributions);
+        });
+
+        function makeInterest() {
+            let contribution_id = $('#contribution_id').val();
+            // alert(contribution_id);
+            let contribution = contributions.find(item => item.id == contribution_id);
+            let amount = $('#amount').val()
+            let interest = contribution.loan_interest
+            let interest_amount = Number(parseFloat(amount) * parseFloat(interest) /100).toFixed(2)
+            let total_amount = parseFloat(amount) + parseFloat(interest_amount)
+            $('#interest_amount').val(interest_amount)
+            $('#interest').val(interest)
+            $('#total_amount').val(total_amount)
+            calculateRefundDate(contribution)
+        }
+        function calculateRefundDate(contribution){
+            if(contribution.loan_duration != null){
+                let period = parseInt(contribution.loan_duration)
+                const today = new Date();
+                let refund_date = null;
+                refund_date = new Date(today);
+                switch (contribution.loan_period) {
+                    case 'Semaine':
+                        refund_date.setDate(refund_date.getDate() + (period * 7));
+                        break;
+                    case 'Mois' :
+                        refund_date.setMonth(refund_date.getMonth() + period);
+                        break;
+                    case 'Année':
+                        refund_date.setFullYear(refund_date.getFullYear() + period);
+                        break
+                    default:
+                        throw new Error('Unité non prise en charge');
+                }
+
+                const formatDate = refund_date.toISOString().split('T')[0];
+                $('#return_date').val(formatDate).prop('readonly', true);
+            }else {
+                $('#return_date').prop('readonly', false)
+            }
+        }
+
+        $('#contribution_id').change(function () {
+            makeInterest();
+        });
+
+        $('#amount').change(function () {
+            makeInterest();
         });
 
         // fonction qui charge les informations : les elements du tableau
@@ -316,7 +379,9 @@
             $('#infosTable_filter').addClass('col-md-4 float-right')
             $('#infosTable_info').addClass('col-md-6 float-left')
             $('#infosTable_paginate').addClass('col-md-6 float-right')
-
+            // render: function(data, type, row) {
+            //     return data.first_name + ' ' + data.last_name;
+            // }
         }
 
         function deleteFun(id) {
@@ -398,6 +463,7 @@
                 }
             });
             const data = $('#save-form').serialize();
+            console.log(data);
 
             $.ajax({
                 type: "POST",
@@ -508,6 +574,84 @@
         $('.modal button[data-dismiss="modal"]').click(function (e) {
             load();
         });
+
+        function montantRemise(totalht){
+            var remise = $('#montant_remise').val();
+            var remise_unite = $('#remise-unite').val();
+
+            if (remise_unite == "pourcentage"){
+
+                if (remise > 100){
+                    alert("le pourcentage est plus grand que 100 pour la remise, verifiez l'unité")
+                    return 0;
+                }
+                // var ht = $('#ht').val()
+                remise = (remise * totalht) / 100;
+            }
+            $('#remise_net').val(remise)
+            return remise;
+        }
+
+        function rejectFun(id) {
+            Swal.fire({
+                title: 'Rejeter la demande',
+                input: 'textarea',
+                inputLabel: 'Commentaire',
+                inputPlaceholder: 'Saisissez votre commentaire ici...',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: !0,
+                confirmButtonText: 'J\'annule',
+                cancelButtonText: 'Non',
+                showLoaderOnConfirm: true,
+                focusConfirm: false,
+                reverseButtons: !0,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Veillez saisir quelque chose!'
+                    }
+                },
+                preConfirm: (admincomment) => {
+                    if (admincomment !== '') {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('loan.reject') }}",
+                            data: {id: id, admincomment: admincomment},
+                            dataType: 'json',
+                            success: function (res) {
+                                if (res) {
+                                    swal.fire("Effectué!", res.message, "success")
+                                    // toastr.success("Validé avec succès!");
+                                    loadDataTable();
+                                    return false;
+                                } else {
+                                    console.log(res)
+                                    sweetAlert("Désolé!", "Erreur lors de l'annulation!", "error")
+                                }
+                            },
+                            error: function (resp) {
+                                loadDataTable();
+                                console.log(resp)
+                                sweetAlert("Désolé!", "Une erreur s'est produite. Actulisez la page et reessayez", "error");
+                                return false;
+                            }
+                        });
+                    }
+                    return false;
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                console.log(result.value);
+                // if (confirm("Supprimer cette tâches?") == true) {
+
+            })
+        }
     </script>
     <!-- DataTables  & Plugins -->
     <script src="{{ asset('AdminLTE-3.2.0/plugins/datatables/jquery.dataTables.min.js')}}"></script>

@@ -71,4 +71,24 @@ class LoanService
         return $find->save();
 
     }
+
+    /**
+     * Avoir les prèts non remboursés
+     * @return \Illuminate\Support\Collection|Collection
+     */
+    public function loanNotRefund() : Collection|\Illuminate\Support\Collection
+    {
+//        $loans = Loan::leftJoin('refunds', 'loans.id', '=', 'refunds.loan_id')
+//            ->selectRaw('loans.*, COALESCE(SUM(refunds.amount), 0) as total_refunded')
+//            ->groupBy('loans.id')
+//            ->havingRaw('total_refunded < loans.amount')
+//            ->get();
+        return Loan::with('member')->withSum('refunds', 'amount')
+            ->where('status_id', '<', 5)->orderBy('id', 'desc')
+            ->get()
+            ->filter(function ($loan) {
+                return ($loan->refunds_sum_amount ?? 0) < $loan->total_amount;
+            });
+
+    }
 }

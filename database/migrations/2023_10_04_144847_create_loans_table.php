@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('type'); // Retournable or not
             $table->float('interest');
             $table->string('interest_type'); // type d'interet pourcentage ou autre
+            $table->float('interest_amount');
             $table->float('total_amount');
             $table->string('status')->default(false);
             $table->date('return_date')->nullable();

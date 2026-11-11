@@ -102,7 +102,7 @@
                             <div class="form-group col-md-8 mb-3">
                                 <label for="name">Désignation<span class="text-danger">*</span></label>
                                 <input type="text" name="name" id="name" class="form-control" required
-                                       autocomplete="name">
+                                       autocomplete="name" placeholder="Désignation de la session">
                                 <div id="name-error" class="text-danger error-display" role="alert"></div>
                             </div>
                             <div class="form-group col-md-4 mb-3">

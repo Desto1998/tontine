@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Meeting;
 use App\Models\SessionContribution;
 use App\Models\SessionMember;
+use App\Models\SessionMemberContribution;
 use App\Models\Sessions;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,17 @@ class SessionsService
     public function getAllActive(): Collection
     {
         return Sessions::where('deleted_by')->where('status', 1)->orderBy('id')->get();
+    }
+
+    /**
+     * Get all orders
+     * @return array
+     */
+    public function getSessionMember(): array
+    {
+        $sessionMembers = SessionMember::with('member')->where('deleted_at', null)->get();
+        $sessionContribution = SessionContribution::with('contribution')->where('deleted_at', null)->get();
+        return [$sessionMembers, $sessionContribution];
     }
 
     /**
@@ -62,16 +74,16 @@ class SessionsService
      * Get a partner
      *
      * @param $id
-     * @return Sessions|BelongsTo
+     * @return array
      */
 
-    public function show($id): Sessions|BelongsTo
+    public function show($id): array
     {
-//        $data = array();
-        $data = Sessions::with('members','contributions')->find($id);
-//        $data['contribution'] = SessionContribution::where('session_id',$session_id)->get()->contribution;
-        return $data;
-//        return Sessions::find($id);
+        $session = Sessions::find($id);
+        $sessionMembers = SessionMember::with('member')->get();
+        $sessionContributions = SessionContribution::with('contribution')->get();
+        $sessionMemberContribution  = SessionMemberContribution::where('session_id', $id)->get();
+        return compact('session', 'sessionMembers', 'sessionContributions', 'sessionMemberContribution');
     }
 
     /**
@@ -122,6 +134,7 @@ class SessionsService
             $saved[$key] = SessionContribution::create([
                 'contribution_id' => $cid,
                 'session_id' => $session_id,
+                'user_id' => Auth::id()
             ]);
         }
         return $saved;
@@ -161,7 +174,7 @@ class SessionsService
      * @param $amount
      * @return SessionMember|bool|null
      */
-    public function setSMasTaken($smId, $amount): SessionMember|null|bool
+    public function setMarkTaken($smId, $amount): SessionMember|null|bool
     {
         return SessionMember::where('id', $smId)->update([
             'taken' => 1,

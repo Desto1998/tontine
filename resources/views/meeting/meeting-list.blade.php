@@ -62,7 +62,7 @@
                             <th>M Pret</th>
                             <th>M Sanc</th>
                             <th>Par</th>
-                            <th>Action</th>
+                            <th data-priority="2">Action</th>
                         </tr>
                         </thead>
                         <tbody>

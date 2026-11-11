@@ -24,12 +24,16 @@ return new class extends Migration
             $table->unsignedBigInteger('session_contribution_id');
             $table->unsignedBigInteger('session_member_id');
             $table->unsignedBigInteger('meeting_id');
-            $this->addDatesColumns($table);
+            $table->unsignedBigInteger('status_id');
             $this->userForeignColumns($table);
+            $this->addDatesColumns($table);
             $table->foreign('session_contribution_id')->references('id')->on('session_contributions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('meeting_id')->references('id')->on('meetings')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('status_id')->references('id')->on('statuses')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 

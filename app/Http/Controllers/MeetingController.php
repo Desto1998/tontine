@@ -15,9 +15,9 @@ use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\Factory;
 use PDF;
-use Validator;
 
 class MeetingController extends Controller
 {
@@ -89,7 +89,7 @@ class MeetingController extends Controller
      */
     public function show($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $session = $this->sessionsService->show($id);
+        $session = $this->sessionsService->show($id)['data'];
         return view('meeting.meeting-show', compact('session'));
     }
 

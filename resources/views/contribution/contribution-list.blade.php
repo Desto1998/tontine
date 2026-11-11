@@ -93,7 +93,7 @@
                     <form action="#" id="save-form" method="post">
                         <div class="form-group mb-3">
                             <label for="name">Nom de la cotisation<span class="text-danger">*</span></label>
-                            <input type="text" min="5" name="name" id="name" class="form-control" required>
+                            <input type="text" min="0" name="name" id="name" class="form-control" required>
                             <div id="name-error" class="text-danger error-display" role="alert"></div>
                         </div>
                         <div class="row">
@@ -107,7 +107,7 @@
                                 <div id="type-error" class="text-danger error-display" role="alert"></div>
                             </div>
                             <div class="form-group col-md-7 mb-3">
-                                <label for="amount">Montant<span class="text-danger">*</span></label>
+                                <label for="amount">Montant à cotiser<span class="text-danger">*</span></label>
                                 <input type="number" min="0" name="amount" id="amount" class="form-control" required>
                                 <div id="amount-error" class="text-danger error-display" role="alert"></div>
                             </div>
@@ -122,8 +122,8 @@
 
                         <hr>
                         <div class="form-group mb-3">
-                            <label for="loan_interest">Intérêt des prêts<span class="text-danger"></span></label>
-                            <input type="number" step="any" name="loan_interest" id="loan_interest" class="form-control">
+                            <label for="loan_interest">Intérêt des prêts<span class="text-danger">*</span></label>
+                            <input type="number" step="any" min="0" max="100" name="loan_interest" id="loan_interest" class="form-control" required>
                             <div id="loan_interest-error" class="text-danger error-display" role="alert"></div>
                         </div>
                         <div class="row">

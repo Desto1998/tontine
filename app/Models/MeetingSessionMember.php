@@ -21,6 +21,7 @@ class MeetingSessionMember extends Model
         'present',
         'took',
         'take_amount',
+        'status_id',
     ];
 
     protected $casts = [

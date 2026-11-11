@@ -7,6 +7,7 @@ use App\Services\ContributionService;
 use App\Services\LoanService;
 use App\Services\LogService;
 use App\Services\MemberService;
+use App\Services\StatusService;
 use Illuminate\Console\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +25,9 @@ class LoanController extends Controller
      * @param loanService $loanService
      * @param MemberService $memberService
      */
-    public function __construct(private LogService $logService, private LoanService $loanService, private MemberService $memberService, private ContributionService $contributionService)
+    public function __construct(private LogService $logService, private LoanService $loanService, private MemberService $memberService,
+      private ContributionService $contributionService,  private StatusService $statusService,
+    )
     {
     }
 
@@ -72,7 +75,7 @@ class LoanController extends Controller
             'reason' => ['required', 'string', 'max:255'],
             'type' => ['required'],
             'interest' => ['required', 'numeric'],
-            'interest_type' => ['required'],
+//            'interest_type' => ['required'],
             'total_amount' => ['required', 'numeric'],
             'return_date' => ['required'],
             'contribution_id' => ['required', 'exists:contributions,id'],
@@ -85,18 +88,25 @@ class LoanController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 //        $request->all()['association_id'] = \Auth::user()->association_id;
-        $request->all()['user_id'] = Auth::user()->id;
 
-        $session = $this->loanService->store($request->all());
-        if ($session) {
+        $request->merge([
+            'user_id' => Auth::id(),
+            'status_id' => 2,
+            'interest_type' => 'Pourcentage',
+        ]);
+//        'user_id'=>Auth::id(), 'status_id'=> 2, 'interest_type' => 'Pourcentage'
+        $loan = $this->loanService->store($request->all());
+        if ($loan) {
+            $this->statusService->storeStatusHistory(2, 0, 'Creation', loan_id:  $loan->id);
+
 //            $this->loanService->saveSessionMembers($request->all()['member_ids'],$session->id );
-            $this->logService->save("Enregistrement", 'Loan', "Enregistrement d'un pret ID: $session->id le" . now() . " Donne: $session", $session->id);
+            $this->logService->save("Enregistrement", 'Loan', json_decode($loan), $loan->id);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Prét enregistrée avec succès.',
-            'data' => $session,
+            'data' => $loan,
         ]);
 
     }
@@ -110,15 +120,16 @@ class LoanController extends Controller
     {
         if (request()->ajax()) {
 
-            $data = Loan::join('users', 'loans.user_id', 'users.id')
+            $data = Loan::with('status')->join('users', 'loans.user_id', 'users.id')
                 ->join('contributions', 'loans.contribution_id', 'contributions.id')
                 ->join('members', 'members.id', 'loans.member_id')
+                ->join('statuses', 'statuses.id', 'loans.status_id')
                 ->where('loans.deleted_by', null)
                 ->where('contributions.association_id', Auth::user()->association_id)
                 ->orderBy('loans.id', 'desc');
 
             if (\App\Models\UserRole::checkRole('Member')){
-                $data->where('loans.user_id', Auth::id());
+                $data->where('loans.member_id', Auth::user()->member_id);
             }
             $data->select('loans.*', 'users.first_name as user', 'contributions.name as contribution', 'members.first_name', 'members.last_name');
 
@@ -158,7 +169,7 @@ class LoanController extends Controller
             'reason' => ['required', 'string', 'max:255'],
             'type' => ['required'],
             'interest' => ['required', 'numeric'],
-            'interest_type' => ['required'],
+            'interest_amount' => ['required','numeric:'],
             'total_amount' => ['required', 'numeric'],
             'return_date' => ['required'],
             'contribution_id' => ['required', 'exists:contributions,id'],
@@ -174,7 +185,8 @@ class LoanController extends Controller
         $data['reason'] = $request->input('reason');
         $data['type'] = $request->input('type');
         $data['interest'] = $request->input('interest');
-        $data['interest_type'] = $request->input('interest_type');
+        $data['interest_amount'] = $request->input('interest_amount');
+        $data['interest_type'] = 'Pourcentage';
         $data['total_amount'] = $request->input('total_amount');
         $data['return_date'] = $request->input('return_date');
         $data['contribution_id'] = $request->input('contribution_id');
@@ -212,4 +224,45 @@ class LoanController extends Controller
     }
 
 
+    public function approve(Loan $loan)
+    {
+        if ($loan->status_id > 2) {
+            return back()->with(
+                'danger',
+                'Le statut ne permet pas de valider'
+            );
+        }
+        $old_status = $loan->status_id;
+        $loan->update([
+            'status_id' => 9,
+        ]);
+        $this->statusService->storeStatusHistory(9, $old_status, 'Validation Pret', loan_id: $loan->id);
+
+        $this->logService->save('VALIDATION', 'Loan', json_encode([$loan]),$loan->id );
+
+        return back()->with(
+            'success',
+            'Demande approuvée'
+        );
+    }
+
+    public function reject(Request $request) {
+        $loan = Loan::find($request->input('id'));
+
+        $request->validate([
+            'admincomment' => 'required|string'
+        ]);
+        $old_status = $loan->status_id;
+        $loan->update([
+            'status_id' => 18
+        ]);
+        $this->statusService->storeStatusHistory(18, $old_status, $request->admincomment, loan_id: $loan->id);
+        $this->logService->save('REJET', 'Loan', json_encode([$loan]),$loan->id );
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Demande rejetée avec succéss!',
+            'data' => $loan,
+        ]);
+    }
 }

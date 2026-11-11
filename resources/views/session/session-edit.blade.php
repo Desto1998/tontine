@@ -57,15 +57,14 @@
                                 <label for="name">Désignation<span class="text-danger">*</span></label>
                                 <input type="text" name="name" value="{{ $session->name }}" id="name"
                                        class="form-control" required
-                                       autocomplete="name">
+                                       autocomplete="name" placeholder="Désignation de la session">
                                 <div id="name-error" class="text-danger error-display" role="alert"></div>
                             </div>
                             <div class="form-group col-md-4 mb-3">
                                 <label for="type">Type<span class="text-danger">*</span></label>
                                 <select name="type" id="type" class="form-control">
-                                    <option>Tontine</option>
-                                    <option>Caisse</option>
-                                    {{--                                    <option>Non remboursable</option>--}}
+                                    <option {{ $session->type == 'Tontine' ? 'selected' : '' }}>Tontine</option>
+                                    <option {{ $session->type == 'Caisse' ? 'selected' : '' }}>Caisse</option>
                                 </select>
                                 <div id="type-error" class="text-danger error-display" role="alert"></div>
                             </div>
@@ -124,10 +123,11 @@
                                         data-placeholder="Selectionner les membres qui vont participer">
                                     <option></option>
 
+
                                     @foreach($members as $member)
                                         @php
                                             $selected= '';
-                                            foreach ($session->members as $mem){
+                                            foreach ($data['sessionMembers'] as $mem){
                                                 if ($mem->id == $member->id){
                                                     $selected= 'selected';
                                                 }
@@ -147,7 +147,7 @@
                                     @foreach($contributions as $contribution)
                                         @php
                                             $selected= '';
-                                            foreach ($session->contributions as $mem){
+                                            foreach ($data['sessionContributions'] as $mem){
                                                 if ($mem->id == $contribution->id){
                                                     $selected= 'selected';
                                                 }
@@ -229,7 +229,7 @@
                 }
             });
             const data = $('#save-form_' + id).serialize();
-
+            console.log(data);
             $.ajax({
                 type: "POST",
                 url: "{{ route('sessions.update') }}",
@@ -237,17 +237,26 @@
                 dataType: 'json',
                 success: function (response) {
                     console.log(response);
+                    return;
                     if ($.isEmptyObject(response.error)) {
                         $('#save-btn_' + id).attr("disabled", false);
                         $('#save-form_' + id + ' .loading').toggle();
                         $('#save-form_' + id + ' .sent-message').slideToggle();
                         // $('#save-form_' + id)[0].reset();
                         $('.edit-modal').modal('hide');
+                        if (response.code == 1) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message
+                            });
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: response.message
+                            });
+                            return;
+                        }
 
-                        Toast.fire({
-                            icon: 'success',
-                            title: response.message
-                        });
                         window.location.href= "{{ route('sessions.index') }}";
                     } else {
                         $('#save-btn_' + id).attr("disabled", false);

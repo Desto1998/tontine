@@ -77,7 +77,7 @@ class ContributionController extends Controller
         $data['description'] = $request->input('description');
         $data['type'] = $request->input('type');
         $data['loan_period'] = $request->input('loan_period');
-        $data['loan_deadline'] = $request->input('loan_deadline');
+        $data['loan_duration'] = $request->input('loan_deadline');
         $data['fail_interest'] = $request->input('fail_interest');
         $data['fail_interest_type'] = $request->input('fail_interest_type');
         $data['interest'] = $request->input('interest');
@@ -142,6 +142,7 @@ class ContributionController extends Controller
             'name' => ['required','string','min:5','max:255'],
             'description' => ['string'],
             'loan_duration' => ['int'],
+            'loan_interest' => ['required','int','min:0','max:100'],
 //            'fund_deadline' => ['date'],
             'interest' => ['float'],
             'loan_period' => ['string', 'min:4'],
@@ -160,10 +161,10 @@ class ContributionController extends Controller
         $data['type'] = $request->input('type');
         $data['loan_period'] = $request->input('loan_period');
         $data['fund_deadline'] = $request->input('fund_deadline');
-        $data['loan_deadline'] = $request->input('loan_deadline');
+        $data['loan_duration'] = $request->input('loan_deadline');
         $data['fail_interest'] = $request->input('fail_interest');
         $data['fail_interest_type'] = $request->input('fail_interest_type');
-        $data['interest'] = $request->input('interest');
+        $data['loan_interest'] = $request->input('loan_interest');
         $data['amount'] = $request->input('amount');
         $save = $this->contributionService->update($request->all()['id'],$data);
         $id = $request->all()['id'];

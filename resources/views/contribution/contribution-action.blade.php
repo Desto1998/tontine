@@ -61,17 +61,17 @@
 
                     <hr>
                     <div class="form-group mb-3">
-                        <label for="loan_duration_{{ $value->id }}">Intérêt des prêts<span class="text-danger">*</span></label>
-                        <input type="number" step="any" min="5" name="loan_duration" value="{{ $value->loan_duration }}" id="loan_duration_{{ $value->id }}" class="form-control" required>
-                        <div id="loan_duration-error_{{ $value->id }}" class="text-danger error-display" role="alert"></div>
+                        <label for="loan_interest">Intérêt des prêts<span class="text-danger">*</span></label>
+                        <input type="number" step="any" min="0" max="100" value="{{ $value->loan_interest }}" name="loan_interest" id="loan_interest" class="form-control">
+                        <div id="loan_interest-error" class="text-danger error-display" role="alert"></div>
                     </div>
+
                     <div class="row">
                         <div class="form-group col-md-7 mb-3">
-                            <label for="fund_deadline_{{ $value->id }}">Durée des prêts<span class="text-danger">*</span></label>
-                            <input type="number" min="0" name="loan_deadline" value="{{ $value->fund_deadline }}" id="fund_deadline_{{ $value->id }}" class="form-control" required>
-                            <div id="fund_deadline-error" class="text-danger error-display" role="alert"></div>
+                            <label for="loan_deadline">Durée des prêts<span class="text-danger">*</span></label>
+                            <input type="number" min="0" value="{{ $value->loan_duration }}" name="loan_deadline" id="loan_deadline" class="form-control" required>
+                            <div id="loan_deadline-error" class="text-danger error-display" role="alert"></div>
                         </div>
-
                         <div class="form-group col-md-5 mb-3">
                             <label for="loan_period_{{ $value->id }}">Période <span class="text-danger">*</span></label>
                             <select name="loan_period" id="loan_period_{{ $value->id }}" class="form-control" required>
