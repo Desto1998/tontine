@@ -140,16 +140,6 @@
                             </div>
                         </div>
 
-{{--                        <div class="form-group mb-3">--}}
-{{--                            <label for="interest_type">Type d'intérèt <span class="text-danger">*</span></label>--}}
-{{--                            <select name="interest_type" id="interest_type" class="form-control">--}}
-{{--                                <option></option>--}}
-{{--                                <option>Pourcentage(%)</option>--}}
-{{--                                <option>Montant(FCFA)</option>--}}
-{{--                            </select>--}}
-{{--                            <div id="interest_type-error" class="text-danger error-display" role="alert"></div>--}}
-{{--                        </div>--}}
-
                         @if(!\App\Models\UserRole::checkRole('Member'))
                             <div class="form-group mb-3">
                                 <label for="member_id">Membres <span class="text-danger">*</span></label>
@@ -234,6 +224,7 @@
             let contribution_id = $('#contribution_id').val();
             // alert(contribution_id);
             let contribution = contributions.find(item => item.id == contribution_id);
+            console.table(contribution);
             let amount = $('#amount').val()
             let interest = contribution.loan_interest
             let interest_amount = Number(parseFloat(amount) * parseFloat(interest) /100).toFixed(2)
@@ -390,9 +381,9 @@
             let table = $('#infosTable').DataTable();
 
             swal.fire({
-                title: "Supprimer ce partenaire?",
+                title: "Supprimer ce prêt?",
                 icon: 'question',
-                text: "Ce prèt serra supprimé, cette action est irreversible.",
+                text: "Ce prêt serra supprimé, cette action est irreversible.",
                 type: "warning",
                 showCancelButton: !0,
                 confirmButtonText: "Oui, supprimer!",

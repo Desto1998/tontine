@@ -1,5 +1,6 @@
 <div class="row">
     {{--    <h3>SECTION COTISATION</h3>--}}
+{{--    @dd($sessionContributions)--}}
     @foreach($sessionContributions as $contribution)
         <div class="col-md-6">
             <!-- Contribution boxes -->

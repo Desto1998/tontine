@@ -54,13 +54,25 @@ class LoanController extends Controller
 
     /**
      * View user detail.
+     * @param Loan $loan
+     * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+     */
+    public function edit(Loan $loan): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        $members = $this->memberService->getAll();
+        $contributions = $this->contributionService->getAll();
+        return view('loan.loan-edit', compact('loan', 'contributions', 'members'));
+    }
+
+    /**
+     * View user detail.
      * @param $id
      * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
      */
     public function show($id): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $session = $this->loanService->show($id);
-        return view('session.session-edit', compact('session'));
+        $loan = $this->loanService->show($id);
+        return view('loan.loan-show', compact('loan'));
     }
 
     /**
@@ -100,7 +112,7 @@ class LoanController extends Controller
             $this->statusService->storeStatusHistory(2, 0, 'Creation', loan_id:  $loan->id);
 
 //            $this->loanService->saveSessionMembers($request->all()['member_ids'],$session->id );
-            $this->logService->save("Enregistrement", 'Loan', json_decode($loan), $loan->id);
+            $this->logService->save("Enregistrement", 'Loan', json_encode($loan), $loan->id);
         }
 
         return response()->json([
@@ -150,7 +162,11 @@ class LoanController extends Controller
                     return $value->first_name . ' ' . $value->last_name;
                 })
                 ->addColumn('statute', function ($value) {
-                    return $value->status ? "<span class='text-warning'>En attente</span>" : "<span class='text-warning'>Remboursé</span>";
+                    $status = $this->statusService
+                        ->statusBadge($value->status);
+
+                    return $status .
+                        " <br> <span class='text-dark'></span>";
                 })
                 ->addColumn('created', function ($value) {
                     return $this->logService->formatCreatedAt($value->created_at);
@@ -164,7 +180,7 @@ class LoanController extends Controller
 
     public function update(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'amount' => ['required', 'numeric'],
             'reason' => ['required', 'string', 'max:255'],
             'type' => ['required'],
@@ -178,9 +194,9 @@ class LoanController extends Controller
             'id' => ['required', 'numeric', 'exists:loans'],
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
-        }
+//        if ($validator->fails()) {
+//            return response()->json(['error' => $validator->errors()]);
+//        }
         $data['amount'] = $request->input('amount');
         $data['reason'] = $request->input('reason');
         $data['type'] = $request->input('type');
@@ -195,11 +211,10 @@ class LoanController extends Controller
         $id = $request->all()['id'];
         $this->logService->save("Modification", 'Loan', "Modification du pret  ID: $id le" . now() . " Donne: ", $request->all()['id']);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Modifié avec succès.',
-            'data' => $save,
-        ]);
+        return redirect(route('loan.index'))->with(
+            'success',
+            'Demande approuvée'
+        );
     }
 
     /**

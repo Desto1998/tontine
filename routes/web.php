@@ -85,6 +85,7 @@ Route::middleware([IsActive::class, LicenceCheck::class])->group(function () {
                 Route::get('loan', 'index')->name('loan.index');
                 Route::get('loan/load', 'load')->name('loan.load');
                 Route::get('loan/{id}', 'show')->name('loan.show');
+                Route::get('loan/{loan}/edit', 'edit')->name('loan.edit');
                 Route::post('loan/store', 'store')->name('loan.store');
                 Route::post('loan/update', 'update')->name('loan.update');
                 Route::delete('loan/destroy', 'destroy')->name('loan.delete');

@@ -150,6 +150,11 @@
                     <a href="#navpills-4" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer
                         Fonds</a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="#navpills-6" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer
+                        les Remboursements</a>
+                </li>
                 @if (count($meetingSessionMembers))
                     <li class="nav-item">
                         <a href="#navpills-5" class="nav-link" data-toggle="tab" aria-expanded="true">Gérer

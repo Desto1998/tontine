@@ -18,7 +18,6 @@ class Loan extends Model
         'interest',
         'interest_type',
         'total_amount',
-        'status',
         'return_date',
         'real_return_date',
         'deleted_by',
