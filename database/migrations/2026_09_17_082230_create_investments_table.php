@@ -21,11 +21,11 @@ return new class extends Migration
             $table->string('interest_type');
             $table->float('interest_amount');
             $table->float('total_amount');
-            $table->string('status');
             $table->date('nm_time')->nullable();
             $table->date('refund_date')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('contribution_id')->nullable();
+            $table->unsignedBigInteger('session_contribution_id')->nullable();
+            $table->unsignedBigInteger('member_id')->nullable();
             $table->unsignedBigInteger('meeting_id')->nullable();
             $table->unsignedBigInteger('status_id')->default(1);
             $this->addDatesColumns($table);
@@ -35,6 +35,9 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('meeting_id')->references('id')->on('meetings')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('members')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });

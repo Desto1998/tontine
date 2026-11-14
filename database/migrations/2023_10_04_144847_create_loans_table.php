@@ -26,10 +26,11 @@ return new class extends Migration
             $table->date('return_date')->nullable();
             $table->date('real_return_date')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('contribution_id')->nullable();
+            $table->unsignedBigInteger('session_contribution_id')->nullable();
             $table->unsignedBigInteger('create_id')->nullable();
-            $table->unsignedBigInteger('member_id');
+            $table->unsignedBigInteger('session_member_id');
             $table->unsignedBigInteger('meeting_id')->nullable();
+            $table->unsignedBigInteger('avarist')->nullable();
             $table->unsignedBigInteger('status_id')->default(1);
             $this->addDatesColumns($table);
             $this->statusForeignColumns($table);
@@ -40,10 +41,16 @@ return new class extends Migration
             $table->foreign('create_id')->references('id')->on('creates')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->foreign('member_id')->references('id')->on('members')
+            $table->foreign('session_member_id')->references('id')->on('session_members')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('avarist')->references('id')->on('session_members')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreign('meeting_id')->references('id')->on('meetings')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('session_contribution_id')->references('id')->on('session_contributions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });
